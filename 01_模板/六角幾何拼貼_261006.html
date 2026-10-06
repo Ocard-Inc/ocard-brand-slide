@@ -680,9 +680,9 @@ body.can-edit .okit-fix{right:136px}
   function toPDF(){
     var secs=sections();
     return lib('h2i').then(function(){return lib('pdf');}).then(function(){
-      var doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'px',format:[1280,720],hotfixes:['px_scaling'],compress:true});
+      var doc=new window.jspdf.jsPDF({orientation:'landscape',unit:'px',format:[1920,1080],hotfixes:['px_scaling'],compress:true});
       return seq(secs,function(sec,i){paint('產生 PDF：'+(i+1)+' / '+secs.length);
-        return shot(sec,{width:1280,height:720}).then(function(c){if(i)doc.addPage([1280,720],'landscape');doc.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,1280,720,undefined,'FAST');});
+        return shot(sec,{width:1280,height:720,pixelRatio:2}).then(function(c){if(i)doc.addPage([1920,1080],'landscape');doc.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,1920,1080,undefined,'FAST');});
       }).then(function(){return doc.output('blob');});
     });
   }
@@ -696,15 +696,16 @@ body.can-edit .okit-fix{right:136px}
   function toPPTX(){
     var secs=sections();
     return lib('h2i').then(function(){return lib('pptx');}).then(function(){
-      var P=new window.PptxGenJS();P.layout='LAYOUT_WIDE';P.title=title();
-      var IN=13.333/1280;
+      /* 1920 × 1080 (20 × 11.25 in at 96 px/in): the 1280 × 720 slide scales up 1.5× — type sizes, lines and gaps too */
+      var P=new window.PptxGenJS();P.defineLayout({name:'OCARD_1920',width:20,height:11.25});P.layout='OCARD_1920';P.title=title();
+      var SC=1.5,IN=20/1280,PT=.75*SC;
       return seq(secs,function(sec,si){paint('產生 PPTX：'+(si+1)+' / '+secs.length);
         var S=P.addSlide(),r0=sec.getBoundingClientRect(),k=r0.width/1280||1,consumed=new Set(),jobs=[];
         function bx(r,pad){pad=pad||{};return {x:((r.left-r0.left)/k+(pad.l||0))*IN,y:((r.top-r0.top)/k+(pad.t||0))*IN,w:Math.max(1,(r.width/k-(pad.l||0)-(pad.r||0)))*IN,h:Math.max(1,(r.height/k-(pad.t||0)-(pad.b||0)))*IN};}
         var bg=rgba(getComputedStyle(sec).backgroundColor);if(bg)S.background={color:bg.hex};
         function pic(el){var r=el.getBoundingClientRect();if(!r.width||!r.height)return;var b=bx(r);
           /* <img> (logos, QR): draw the picture itself — an SVG <img> cloned on its own comes out blank */
-          if(el.tagName==='IMG'){if(!el.getAttribute('src'))return;jobs.push(new Promise(function(res){var im=new Image();im.onload=function(){var sc=3,c=document.createElement('canvas');c.width=Math.max(1,Math.round(r.width/k*sc));c.height=Math.max(1,Math.round(r.height/k*sc));
+          if(el.tagName==='IMG'){if(!el.getAttribute('src'))return;jobs.push(new Promise(function(res){var im=new Image();im.onload=function(){var sc=4,c=document.createElement('canvas');c.width=Math.max(1,Math.round(r.width/k*sc));c.height=Math.max(1,Math.round(r.height/k*sc));
             c.getContext('2d').drawImage(im,0,0,c.width,c.height);try{S.addImage({data:c.toDataURL('image/png'),x:b.x,y:b.y,w:b.w,h:b.h});}catch(e){}res();};im.onerror=function(){res();};im.src=el.currentSrc||el.src;}));return;}
           jobs.push(shot(el,{pixelRatio:el.tagName==='IMAGE-SLOT'||r.width/k>300?2:4,skipFonts:true}).then(function(c){S.addImage({data:c.toDataURL('image/png'),x:b.x,y:b.y,w:b.w,h:b.h});}).catch(function(){}));}
         function boxShapes(el,cs){
@@ -713,8 +714,8 @@ body.can-edit .okit-fix{right:136px}
           var fill=rgba(cs.backgroundColor),sh=shadows(cs.boxShadow),ring=null,outer=null,bars=[];
           sh.forEach(function(s){var c=rgba(s.color);if(!c)return;if(s.inset&&!s.x&&!s.y&&s.spread>0)ring={c:c,w:s.spread};else if(s.inset&&s.x>0)bars.push({c:c,w:s.x});else if(!s.inset&&(s.blur||s.y))outer={c:c,blur:s.blur,y:s.y};});
           var bl=parseFloat(cs.borderLeftWidth)||0,blc=rgba(cs.borderLeftColor);
-          if(fill||ring||outer){var o={x:b.x,y:b.y,w:b.w,h:b.h,fill:fill?{color:fill.hex,transparency:fill.tr}:{type:'none'},line:ring?{color:ring.c.hex,width:ring.w*.75,transparency:ring.c.tr}:{type:'none'}};
-            if(rr)o.rectRadius=rr*Math.min(b.w,b.h);if(outer)o.shadow={type:'outer',blur:outer.blur*.75,offset:outer.y*.75,angle:90,color:outer.c.hex,opacity:Math.max(.05,1-outer.c.tr/100)};S.addShape(shp,o);}
+          if(fill||ring||outer){var o={x:b.x,y:b.y,w:b.w,h:b.h,fill:fill?{color:fill.hex,transparency:fill.tr}:{type:'none'},line:ring?{color:ring.c.hex,width:ring.w*PT,transparency:ring.c.tr}:{type:'none'}};
+            if(rr)o.rectRadius=rr*Math.min(b.w,b.h);if(outer)o.shadow={type:'outer',blur:outer.blur*PT,offset:outer.y*PT,angle:90,color:outer.c.hex,opacity:Math.max(.05,1-outer.c.tr/100)};S.addShape(shp,o);}
           bars.forEach(function(bb){S.addShape(P.ShapeType.rect,{x:b.x,y:b.y,w:bb.w*IN,h:b.h,fill:{color:bb.c.hex},line:{type:'none'}});});
           if(bl&&blc&&cs.borderLeftStyle!=='none')S.addShape(P.ShapeType.rect,{x:b.x,y:b.y,w:bl*IN,h:b.h,fill:{color:blc.hex,transparency:blc.tr},line:{type:'none'}});
           ['Top','Bottom'].forEach(function(sd){var w=parseFloat(cs['border'+sd+'Width'])||0,c=rgba(cs['border'+sd+'Color']);if(w&&c&&cs['border'+sd+'Style']!=='none')S.addShape(P.ShapeType.rect,{x:b.x,y:sd==='Top'?b.y:b.y+b.h-w*IN,w:b.w,h:w*IN,fill:{color:c.hex,transparency:c.tr},line:{type:'none'}});});
@@ -724,7 +725,7 @@ body.can-edit .okit-fix{right:136px}
         function runs(el,out,base){
           for(var n=el.firstChild;n;n=n.nextSibling){
             if(n.nodeType===3){var t=n.nodeValue.replace(/\s+/g,' ');if(!t)continue;var cs=getComputedStyle(el);if(cs.textTransform==='uppercase')t=t.toUpperCase();
-              var col=rgba(cs.color)||{hex:'333333',tr:0},o={color:col.hex,bold:(parseInt(cs.fontWeight,10)||400)>=600,fontSize:Math.round(parseFloat(cs.fontSize)*.75*2)/2,charSpacing:(parseFloat(cs.letterSpacing)||0)*.75};
+              var col=rgba(cs.color)||{hex:'333333',tr:0},o={color:col.hex,bold:(parseInt(cs.fontWeight,10)||400)>=600,fontSize:Math.round(parseFloat(cs.fontSize)*PT*2)/2,charSpacing:(parseFloat(cs.letterSpacing)||0)*PT};
               if(col.tr)o.transparency=col.tr;
               t.split(CJK).forEach(function(seg){if(!seg)return;out.push({text:seg,options:Object.assign({fontFace:CJK.test(seg)?'Noto Sans TC':'Montserrat'},o)});});}
             else if(n.nodeType===1){var c2=getComputedStyle(n);if(c2.display==='none')continue;
@@ -748,7 +749,7 @@ body.can-edit .okit-fix{right:136px}
               var flexMid=/flex/.test(cs.display)&&cs.alignItems==='center';
               /* one-line text gets room to spare (fonts differ slightly in PowerPoint/Keynote), anchored on its alignment side */
               var extra=one?b.w*.25+.1:b.w*.04,ra=al==='right'||al==='end',x=b.x-(al==='center'?extra/2:ra?extra:0);
-              S.addText(rs,{x:x,y:b.y,w:b.w+extra,h:b.h,margin:0,valign:flexMid?'middle':'top',align:al==='center'?'center':ra?'right':'left',lineSpacing:lh*.75,wrap:!one,fit:'none',paraSpaceBefore:0,paraSpaceAfter:0});
+              S.addText(rs,{x:x,y:b.y,w:b.w+extra,h:b.h,margin:0,valign:flexMid?'middle':'top',align:al==='center'?'center':ra?'right':'left',lineSpacing:lh*PT,wrap:!one,fit:'none',paraSpaceBefore:0,paraSpaceAfter:0});
             }
           }
           Array.prototype.forEach.call(el.children,visit);
