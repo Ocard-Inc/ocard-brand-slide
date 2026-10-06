@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ocard 規定用色</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Noto+Sans+TC:wght@400;500;700;800&display=swap">
+<style>
+:root{--ink:#333333;--g700:#5C5C5C;--g500:#8A8A8A;--g200:#E8E8E8;--g50:#FAFAFA;--y:#FFEA00}
+*{box-sizing:border-box}
+body{margin:0;background:#FFFFFF;color:var(--ink);font-family:"Montserrat","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;font-size:16px;line-height:1.7}
+.wrap{max-width:1040px;margin:0 auto;padding:48px 16px 80px}
+h1{margin:0;font-size:36px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.rule{width:72px;height:6px;border-radius:999px;background:var(--y);margin:16px 0 12px}
+.meta{color:var(--g700);font-size:14px}
+h2{font-size:22px;font-weight:800;margin:48px 0 4px}
+h2+p{margin:0 0 18px;color:var(--g700);font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.sw{border-radius:12px;box-shadow:inset 0 0 0 1px var(--g200);overflow:hidden;background:#FFFFFF}
+.chip{height:88px}
+.sw div.t{padding:12px 14px}
+.sw b{display:block;font-size:15px}
+.sw code{font-family:"Montserrat",monospace;font-size:13px;font-weight:600}
+.sw small{display:block;font-size:12px;color:var(--g700);line-height:1.5;margin-top:4px}
+.pair{display:flex}.pair .chip{flex:1}
+.ink-panel{background:#333333;border-radius:16px;padding:20px;color:#FFFFFF}
+.ink-panel .sw{background:#3D3D3D;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.ink-panel .sw small{color:rgba(255,255,255,.72)}
+.rules{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.rules li{display:flex;gap:14px;padding:16px 18px;border-radius:12px;background:var(--g50)}
+.rules li b{flex:0 0 120px;font-weight:700}
+.rules li span{color:var(--g700)}
+.demo{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.pill{display:inline-flex;align-items:center;padding:5px 12px;border-radius:999px;font-size:14px;font-weight:700;line-height:1.3}
+.note{margin-top:40px;font-size:13px;color:var(--g500)}
+@media (max-width:640px){.rules li{flex-direction:column;gap:4px}.rules li b{flex:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ocard 規定用色</h1>
+  <div class="rule"></div>
+  <p class="meta">最後更新：2026-10-06 · 來源：skill 的 <code>tokens/colors.css</code> 與 <code>readme.md</code>（Colour 章節）。兩邊有出入時以 skill 為準。</p>
+
+  <h2>品牌標準色</h2>
+  <p>只有這三色，品牌就是由這三色構成。</p>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#FFEA00"></div><div class="t"><b>品牌黃</b><code>#FFEA00</code><small>小面積點綴：標題下的黃線、螢光筆標記、標題中的一個詞、重點卡側條。不當大面積底色。</small></div></div>
+    <div class="sw"><div class="chip" style="background:#333333"></div><div class="t"><b>墨</b><code>#333333</code><small>所有內文、數字、深色底。不用純黑。</small></div></div>
+    <div class="sw"><div class="chip" style="background:#FFFFFF;box-shadow:inset 0 -1px 0 #E8E8E8"></div><div class="t"><b>白</b><code>#FFFFFF</code><small>白底標準的頁面底色。</small></div></div>
+  </div>
+
+  <h2>輔助色（白底用）</h2>
+  <p>飽和色當標記、淡色當底，同一色相成對使用。取用順序：橘 → 紫 → 青。</p>
+  <div class="grid">
+    <div class="sw"><div class="pair"><div class="chip" style="background:#FC6815"></div><div class="chip" style="background:#FFE8DC"></div></div><div class="t"><b>橘</b><code>#FC6815</code> · <code>#FFE8DC</code><small>第一順位。</small></div></div>
+    <div class="sw"><div class="pair"><div class="chip" style="background:#B287FD"></div><div class="chip" style="background:#EEE5FF"></div></div><div class="t"><b>紫</b><code>#B287FD</code> · <code>#EEE5FF</code><small>文字與 1pt 外框用深紫 <code>#8B5CF6</code>。</small></div></div>
+    <div class="sw"><div class="pair"><div class="chip" style="background:#24C6B7"></div><div class="chip" style="background:#E7F5F4"></div></div><div class="t"><b>青</b><code>#24C6B7</code> · <code>#E7F5F4</code><small>文字與 1pt 外框用深青 <code>#1AA89B</code>。</small></div></div>
+    <div class="sw"><div class="chip" style="background:#FFF8C8"></div><div class="t"><b>淡黃</b><code>#FFF8C8</code><small>只用在焦點框、行內標記，不當卡片底色。</small></div></div>
+  </div>
+
+  <h2>墨底輔助色</h2>
+  <p>僅限墨底標準使用；白底一律用上面的標準輔助色。品牌黃不變。</p>
+  <div class="ink-panel"><div class="grid">
+    <div class="sw"><div class="chip" style="background:#FF7A2E"></div><div class="t"><b>墨底橘</b><code>#FF7A2E</code></div></div>
+    <div class="sw"><div class="chip" style="background:#CDAEFF"></div><div class="t"><b>墨底紫</b><code>#CDAEFF</code></div></div>
+    <div class="sw"><div class="chip" style="background:#6ED6CA"></div><div class="t"><b>墨底青</b><code>#6ED6CA</code></div></div>
+    <div class="sw"><div class="chip" style="background:#3D3D3D;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)"></div><div class="t"><b>墨底卡片</b><code>#3D3D3D</code><small>次要文字最淡用 rgba(255,255,255,.58)。</small></div></div>
+  </div></div>
+
+  <h2>中性灰</h2>
+  <p>由 #333333 與 #FFFFFF 推導，淺灰只用一個。</p>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:#5C5C5C"></div><div class="t"><b>次要內文</b><code>#5C5C5C</code></div></div>
+    <div class="sw"><div class="chip" style="background:#ADADAD"></div><div class="t"><b>淺灰</b><code>#ADADAD</code><small>左上頁面標籤、頁碼、序號、淡化圖示。</small></div></div>
+    <div class="sw"><div class="chip" style="background:#E8E8E8"></div><div class="t"><b>細線</b><code>#E8E8E8</code></div></div>
+    <div class="sw"><div class="chip" style="background:#F7F7F7"></div><div class="t"><b>一般卡片</b><code>#F7F7F7</code></div></div>
+  </div>
+
+  <h2>輔助色用量規則</h2>
+  <p>輔助色是訊號，不是裝飾。</p>
+  <ul class="rules">
+    <li><b>一頁預設一色</b><span>同一頁原則上只用一種輔助色。<strong>只有顏色在區分不同類別時才可多色</strong>（例如不同類型的標籤、圖表的不同數列）；裝飾不構成用第二色的理由。</span></li>
+    <li><b>面積 ≤ 10%</b><span>單頁輔助色可見面積加總（標籤、細框、圖表重點）不超過 10%。</span></li>
+    <li><b>外框 1pt</b><span>狀態標籤一律白底＋1pt 輔助色外框＋輔助色文字，不填滿、不加陰影。</span></li>
+    <li><b>不做三件事</b><span>不做 CTA 按鈕、不做標題、不做大面積底色。</span></li>
+    <li><b>文字只到標籤</b><span>輔助色文字只用在 11–20px 的標籤；內文與數字一律 #333333。</span></li>
+    <li><b>每頁至少一色</b><span>除了 logo，不讓一頁只有黑白灰：最少有品牌黃標題線，或一個輔助色元素。</span></li>
+    <li><b>黃色不當圖磚</b><span>編號圖磚、列點、長條圖不用黃色。黃色是沒有分類色可跟時的補充色（例如重點卡側條）。</span></li>
+  </ul>
+  <div class="demo" aria-label="分類標籤示範">
+    <span class="pill" style="color:#FC6815;box-shadow:inset 0 0 0 1.33px #FC6815">餐飲</span>
+    <span class="pill" style="color:#8B5CF6;box-shadow:inset 0 0 0 1.33px #8B5CF6">零售</span>
+    <span class="pill" style="color:#1AA89B;box-shadow:inset 0 0 0 1.33px #1AA89B">美業</span>
+    <span class="pill" style="color:#5C5C5C">← 不同產業＝不同類別，所以可以並用三色</span>
+  </div>
+
+  <p class="note">色票的程式定義在 skill 的 tokens/colors.css；修改色票請改那裡，再同步更新這一頁並在 04_討論決定紀錄 記一筆。</p>
+</div>
+</body>
+</html>

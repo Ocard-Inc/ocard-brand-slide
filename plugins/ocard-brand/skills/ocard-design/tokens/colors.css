@@ -1,0 +1,27 @@
+:root{
+/* Brand standard (品牌標準色) — 僅此三色 */
+--oc-yellow:#FFEA00;
+--oc-ink:#333333;--oc-white:#FFFFFF;
+/* Accent (輔助色) */
+--oc-yellow-tint:#FFF8C8;
+--oc-orange:#FC6815;--oc-orange-tint:#FFE8DC;
+--oc-teal:#24C6B7;--oc-teal-tint:#E7F5F4;--oc-teal-deep:#1AA89B;
+--oc-purple:#B287FD;--oc-purple-tint:#EEE5FF;--oc-purple-deep:#8B5CF6;
+/* 墨底輔助色 — 僅限墨色版（#333333 底）使用；白底／灰底一律用上方標準輔助色 */
+--oc-ink-orange:#FF7A2E;--oc-ink-teal:#6ED6CA;--oc-ink-purple:#CDAEFF;
+/* Neutral ramp derived from #333333 / #FFFFFF */
+--oc-gray-950:#1A1A1A;--oc-gray-900:#333333;--oc-gray-700:#5C5C5C;--oc-gray-500:#8A8A8A;
+--oc-gray-400:#ADADAD;--oc-gray-300:#D6D6D6;--oc-gray-200:#E8E8E8;--oc-gray-100:#F2F2F2;--oc-gray-50:#FAFAFA;
+/* Interaction states: yellow darkens on hover, ink lightens */
+--oc-yellow-hover:#F0DC00;--oc-yellow-press:#DCCA00;
+--oc-ink-hover:#4A4A4A;--oc-ink-press:#1A1A1A;
+
+/* ---- Semantic aliases ---- */
+--text-primary:var(--oc-gray-900);--text-secondary:var(--oc-gray-700);--text-muted:var(--oc-gray-500);
+--text-inverse:var(--oc-white);--text-on-brand:var(--oc-gray-900);--text-link:var(--oc-gray-900);
+--surface-page:var(--oc-white);--surface-subtle:var(--oc-gray-50);--surface-card:var(--oc-white);
+--surface-sunken:var(--oc-gray-100);--surface-inverse:var(--oc-gray-900);--surface-brand:var(--oc-yellow);
+--surface-brand-subtle:var(--oc-yellow-tint);
+--border-default:var(--oc-gray-200);--border-strong:var(--oc-gray-300);--border-focus:var(--oc-gray-900);
+--focus-ring:var(--oc-yellow);
+}

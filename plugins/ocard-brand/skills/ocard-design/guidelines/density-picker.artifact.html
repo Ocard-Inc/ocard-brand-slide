@@ -1,0 +1,144 @@
+<title>Ocard 簡報資訊密度</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Noto+Sans+TC:wght@400;500;700;800&display=swap">
+<style>
+/* Single light look on purpose: the choices are previews of white-ground slides */
+:root{
+  color-scheme:light;
+  --ink:#333333;--ink-2:#5C5C5C;--muted:#8A8A8A;--light:#ADADAD;
+  --line:#E8E8E8;--line-2:#D6D6D6;--sunken:#FAFAFA;--tile:#F2F2F2;
+  --yellow:#FFEA00;--yellow-tint:#FFF8C8;--page:#FFFFFF;
+  --font:"Montserrat","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:40px 140px;display:flex;flex-direction:column;gap:40px}
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--light)}
+h1{margin:0;font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.25;text-wrap:balance}
+.rule{height:5px;width:64px;background:var(--yellow);border-radius:999px}
+.lead{margin:0;color:var(--ink-2);max-width:62ch}
+.fixed{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line)}
+.fixed .sw{flex:0 0 auto;width:44px;height:28px;border-radius:6px;background:#FFFFFF;box-shadow:inset 0 0 0 1px var(--line-2)}
+.fixed b{font-weight:700}
+.fixed span{color:var(--ink-2);font-size:14px}
+.q{display:flex;flex-direction:column;gap:14px}
+.qh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.qn{font-size:14px;font-weight:700;color:var(--light);font-variant-numeric:tabular-nums}
+.qh h2{margin:0;font-size:20px;font-weight:700}
+.qh p{margin:0;font-size:14px;color:var(--ink-2)}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.opt{font:inherit;color:inherit;text-align:left;border:0;background:#FFFFFF;border-radius:12px;padding:10px;cursor:pointer;display:flex;flex-direction:column;gap:8px;box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow 120ms cubic-bezier(.2,0,0,1)}
+.opt:hover{box-shadow:inset 0 0 0 1px var(--line-2)}
+.opt:focus-visible{outline:1px solid var(--ink);box-shadow:0 0 0 3px var(--yellow-tint),inset 0 0 0 1px var(--ink)}
+.opt[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--ink)}
+.pic{display:block;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line);background:#FFFFFF}
+.pic svg{display:block;width:100%;height:auto}
+.nm{display:flex;align-items:center;gap:8px;font-size:15px}
+.lt{font-size:12px;font-weight:700;background:var(--ink);color:var(--yellow);border-radius:4px;padding:2px 6px;line-height:1.3}
+.dft{font-style:normal;font-size:11px;font-weight:700;color:var(--ink-2);padding:2px 7px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line-2);margin-left:auto}
+.ds{font-size:13px;line-height:1.55;color:var(--ink-2)}
+.q .off-note{display:none;margin:0;font-size:13px;color:var(--ink-2);padding:10px 12px;border-radius:8px;background:var(--sunken);box-shadow:inset 0 0 0 1px var(--line)}
+.q.off .off-note{display:block}
+.q.off .opts{opacity:.35;pointer-events:none}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#FFFFFF;border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));z-index:5}
+.bar-in{max-width:1080px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.sum{flex:1 1 360px;font-size:13px;line-height:1.6;color:var(--ink-2);min-width:0}
+.sum b{color:var(--ink);font-weight:700}
+.btn{font:inherit;font-size:15px;font-weight:700;height:44px;padding:0 20px;border-radius:999px;border:0;cursor:pointer;transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:1px solid var(--ink);box-shadow:0 0 0 3px var(--yellow-tint)}
+.btn-ink{background:var(--ink);color:#FFFFFF}
+.btn-ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line-2)}
+.copied{font-size:13px;font-weight:700;color:var(--ink)}
+textarea{display:block;width:100%;margin-top:8px;font:inherit;font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid var(--line-2);resize:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">STEP 1 · 資訊密度</span>
+    <h1>每一頁想放多少內容？</h1>
+    <div class="rule"></div>
+    <p class="lead">密度會決定頁數：越精簡頁數越多、每頁字越大；越詳盡頁數越少、每頁資訊越多。<b>這一頁用來看示意，請在對話裡點選同一題並按確認</b>，Claude 就會開始整理頁面大綱，這個視窗可以關掉。</p>
+  </header>
+<section class="q" id="q-density"><div class="qh"><h2>資訊密度</h2><p>每一頁要放多少內容；會直接影響總頁數</p></div><div class="opts"><button class="opt" type="button" data-q="density" data-v="精簡" aria-pressed="false"><span class="pic"><svg viewBox="0 0 200 112"><rect width="200" height="112" fill="#FFFFFF"/><rect x="14" y="30" width="110" height="14" rx="3" fill="#333333"/><rect x="14" y="50" width="20" height="3" rx="1.5" fill="#FFEA00"/><rect x="14" y="66" width="80" height="5" rx="2" fill="#ADADAD"/></svg></span><span class="nm"><b class="lt">A</b><b>精簡</b></span><span class="ds">一頁只講一件事，字大、留白多；適合現場報告</span></button><button class="opt" type="button" data-q="density" data-v="標準" aria-pressed="false"><span class="pic"><svg viewBox="0 0 200 112"><rect width="200" height="112" fill="#FFFFFF"/><rect x="14" y="14" width="80" height="9" rx="2" fill="#333333"/><rect x="14" y="27" width="16" height="3" rx="1.5" fill="#FFEA00"/><rect x="14" y="44" width="54" height="50" rx="6" fill="#F2F2F2"/><rect x="73" y="44" width="54" height="50" rx="6" fill="#F2F2F2"/><rect x="132" y="44" width="54" height="50" rx="6" fill="#F2F2F2"/></svg></span><span class="nm"><b class="lt">B</b><b>標準</b><i class="dft">預設</i></span><span class="ds">一頁 3 個重點，文字與留白平衡；多數簡報適用</span></button><button class="opt" type="button" data-q="density" data-v="詳盡" aria-pressed="false"><span class="pic"><svg viewBox="0 0 200 112"><rect width="200" height="112" fill="#FFFFFF"/><rect x="14" y="14" width="80" height="9" rx="2" fill="#333333"/><rect x="14" y="27" width="16" height="3" rx="1.5" fill="#FFEA00"/><rect x="14" y="40" width="54" height="27" rx="4" fill="#F2F2F2"/><rect x="19" y="46" width="22" height="5" rx="1" fill="#333333"/><rect x="19" y="55" width="40" height="3" rx="1" fill="#ADADAD"/><rect x="73" y="40" width="54" height="27" rx="4" fill="#F2F2F2"/><rect x="78" y="46" width="22" height="5" rx="1" fill="#333333"/><rect x="78" y="55" width="40" height="3" rx="1" fill="#ADADAD"/><rect x="132" y="40" width="54" height="27" rx="4" fill="#F2F2F2"/><rect x="137" y="46" width="22" height="5" rx="1" fill="#333333"/><rect x="137" y="55" width="40" height="3" rx="1" fill="#ADADAD"/><rect x="14" y="72" width="54" height="27" rx="4" fill="#F2F2F2"/><rect x="19" y="78" width="22" height="5" rx="1" fill="#333333"/><rect x="19" y="87" width="40" height="3" rx="1" fill="#ADADAD"/><rect x="73" y="72" width="54" height="27" rx="4" fill="#F2F2F2"/><rect x="78" y="78" width="22" height="5" rx="1" fill="#333333"/><rect x="78" y="87" width="40" height="3" rx="1" fill="#ADADAD"/><rect x="132" y="72" width="54" height="27" rx="4" fill="#F2F2F2"/><rect x="137" y="78" width="22" height="5" rx="1" fill="#333333"/><rect x="137" y="87" width="40" height="3" rx="1" fill="#ADADAD"/></svg></span><span class="nm"><b class="lt">C</b><b>詳盡</b></span><span class="ds">一頁放多組數據與說明；適合會後自行閱讀的報告</span></button></div></section>
+
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="sum" id="sum" aria-live="polite"></div>
+    <button class="btn btn-ghost" id="auto" type="button">都交給你決定</button>
+    <button class="btn btn-ghost" id="copy" type="button" hidden>複製文字</button>
+    <button class="btn btn-ink" id="ok" type="button">確認選擇</button>
+  </div>
+  <div class="bar-in" id="done" hidden><p class="copied" id="done-msg" style="margin:6px 0 0"></p></div>
+  <div class="bar-in" id="fallback" hidden><textarea id="out" rows="2" readonly aria-label="我的選擇"></textarea></div>
+</div>
+
+<script>
+(function(){
+  /* a question that does not apply because of another answer, e.g. no corners to round on borderless columns */
+  var OFF={radius:{q:'card',v:'無框分欄',note:'卡片外觀選了「無框分欄」，內容沒有外框、沒有轉角，所以不用選圓角。'}};
+  var META=[{"id": "density", "title": "資訊密度", "default": "標準", "labels": ["精簡", "標準", "詳盡"]}], KEY='ocard-density-picker', sel={}, confirmed=false, db=null, ref=null, timer=null;
+  try{sel=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){sel={};}
+  var ok=document.getElementById('ok'),copyBtn=document.getElementById('copy'),done=document.getElementById('done'),doneMsg=document.getElementById('done-msg');
+  function letter(q,v){return 'ABCDEFG'[q.labels.indexOf(v)];}
+  function text(){
+    return '資訊密度：'+META.map(function(q){
+      if(isOff(q.id))return q.title+' 不適用';
+      var v=sel[q.id];return q.title+' '+(v?letter(q,v)+' '+v:'交給你（預設 '+q.default+'）');
+    }).join('｜');
+  }
+  /* the choices are written to the artifact's data store so Claude can read them back */
+  function push(){
+    try{localStorage.setItem(KEY,JSON.stringify(sel));}catch(e){}
+    if(!ref)return;
+    clearTimeout(timer);
+    timer=setTimeout(function(){
+      ref.set({sel:sel,summary:text(),confirmed:confirmed,updatedAt:Date.now()}).catch(function(){showCopy();});
+    },confirmed?0:500);
+  }
+  function showCopy(){copyBtn.hidden=false;}
+  function isOff(id){var o=OFF[id];return !!(o&&sel[o.q]===o.v);}
+  function render(){
+    Object.keys(OFF).forEach(function(id){
+      var sec=document.getElementById('q-'+id);if(!sec)return;
+      if(!sec.querySelector('.off-note')){var n=document.createElement('p');n.className='off-note';n.textContent=OFF[id].note;sec.querySelector('.qh').after(n);}
+      var off=isOff(id);sec.classList.toggle('off',off);
+      sec.querySelectorAll('.opt').forEach(function(b){b.disabled=off;});
+      if(off)delete sel[id];
+    });
+    document.querySelectorAll('.opt').forEach(function(b){b.setAttribute('aria-pressed',sel[b.dataset.q]===b.dataset.v?'true':'false');});
+    var live=META.filter(function(q){return !isOff(q.id);}),n=live.filter(function(q){return sel[q.id];}).length;
+    document.getElementById('sum').innerHTML='<b>已選 '+n+' / '+live.length+' 題</b>　'+text().replace('資訊密度：','');
+    ok.textContent=confirmed?'已確認':'確認選擇';
+    done.hidden=!confirmed;
+    if(confirmed)copyBtn.hidden=false;
+    doneMsg.textContent=ref?'已確認並同步。回到對話說一聲「選好了」即可；如果 Claude 說讀不到，按「複製文字」貼回對話。想改就重新點選再按確認。':'已確認。這個檢視無法自動同步，請按「複製文字」貼回對話。';
+  }
+  document.querySelectorAll('.opt').forEach(function(b){
+    b.addEventListener('click',function(){var q=b.dataset.q;if(sel[q]===b.dataset.v)delete sel[q];else sel[q]=b.dataset.v;confirmed=false;push();render();});
+  });
+  document.getElementById('auto').onclick=function(){sel={};confirmed=true;push();render();};
+  ok.onclick=function(){confirmed=true;push();render();if(!ref)showCopy();};
+  function fallback(){var f=document.getElementById('fallback'),o=document.getElementById('out');f.hidden=false;o.value=text();o.focus();o.select();}
+  copyBtn.onclick=function(){
+    try{navigator.clipboard.writeText(text()).then(function(){copyBtn.textContent='已複製';},fallback);}catch(e){fallback();}
+  };
+  render();
+  if(window.claude&&window.claude.use){
+    window.claude.use('db').then(function(d){
+      if(!d){showCopy();return;}
+      db=d;ref=db.doc('picks/density');
+      ref.get().then(function(snap){
+        if(snap.exists){var v=snap.data()||{};if(v.sel&&!Object.keys(sel).length)sel=Object.assign({},v.sel);confirmed=!!v.confirmed;render();}
+      }).catch(function(){});
+      render();
+    }).catch(showCopy);
+  }else showCopy();
+})();
+</script>

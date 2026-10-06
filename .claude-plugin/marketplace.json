@@ -1,0 +1,14 @@
+{
+  "name": "ocard-slide-system",
+  "owner": {
+    "name": "Ocard Inc."
+  },
+  "plugins": [
+    {
+      "name": "ocard-slide-system-261006",
+      "source": "./plugins/ocard-brand",
+      "description": "Ocard Slide System — Ocard 品牌設計系統與簡報製作（白底標準、墨底標準、六角幾何拼貼，內建調整面板）。更新日期 2026-10-06。",
+      "version": "1.2.0"
+    }
+  ]
+}

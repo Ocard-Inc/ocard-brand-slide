@@ -1,0 +1,55 @@
+<!-- @dsCard group="Components" viewport="880x760" name="簡報元件 — Card, Badge, Icon, Logo" subtitle="卡面、標重點三選一、標籤與編號的分工、淺灰外框圖磚" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.544.0/font/lucide.css">
+<script src="../../_ds_bundle.js"></script>
+<style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:var(--font-sans);color:var(--text-primary);background:var(--surface-page);padding:20px 24px}.lbl{font-size:10px;font-family:var(--font-mono);color:var(--oc-gray-700);letter-spacing:.06em;text-transform:uppercase;margin:0 0 10px}.stack{display:flex;flex-direction:column;gap:18px}.row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.note{margin:12px 0 0;font-size:var(--fs-body-sm);line-height:1.7;color:var(--oc-gray-700)}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+const { Card, Badge, Icon, Logo } = window.OcardDesignSystem_3a43d7;
+const FACES = [['elevated','浮起'],['outlined','外框'],['filled','淺灰底 · 一般卡'],['inverse','反白 · 墨底一般卡']];
+const Body = ({k,l}) => <React.Fragment>
+  <div style={{fontSize:'var(--fs-micro)',fontFamily:'var(--font-mono)',opacity:.75}}>{k}</div>
+  <div style={{fontSize:'var(--fs-body-sm)',fontWeight:600}}>{l}</div>
+  <div style={{fontSize:24,fontWeight:800,letterSpacing:'-.02em'}}>1,284</div>
+</React.Fragment>;
+function Demo(){
+ return <div className="stack">
+  <div><p className="lbl">Card 卡面 — 四種</p><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,alignItems:'stretch'}}>
+    {FACES.map(([v,l])=><Card key={v} variant={v} padding="14px" style={{flex:1,minWidth:0,gap:6}}><Body k={v} l={l} /></Card>)}
+  </div></div>
+
+  <div><p className="lbl">標重點 — 三選一，不疊加，一組卡片只標一張</p><div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,alignItems:'stretch'}}>
+    <Card variant="filled" emphasis="neutral" padding="14px" style={{minWidth:0,gap:6}}><Body k="emphasis=neutral" l="白底灰框 · 主要頁面" /></Card>
+    <Card variant="inverse" emphasis="neutral" ground="ink" padding="14px" style={{minWidth:0,gap:6}}><Body k="neutral · ground=ink" l="墨底頁改淺灰底卡" /></Card>
+    <Card variant="filled" emphasis="accent" accent="teal" padding="14px" style={{minWidth:0,gap:6}}><Body k="emphasis=accent" l="輔助色側條 · 分類頁" /></Card>
+    <Card variant="filled" tag="最多人選" tagAlign="end" padding="14px" style={{minWidth:0,gap:6}}><Body k="tag" l="1pt 外框標籤" /></Card>
+  </div>
+  <p className="note"><strong style={{color:'var(--text-primary)',fontWeight:700}}>主要頁面一律用中性強調。</strong>章節總結、方案、生命週期、對照這類頁面，輔助色已經在替分類說話，重點卡再用輔助色就跟分類混在一起——淺底頁用白底 + 灰框（旁邊的一般卡是淺灰底），墨底頁用淺灰底卡片。輔助色側條只留給該頁真的有分類色的場合（圖表下方的解讀卡），顏色跟著圖表走。<strong style={{color:'var(--text-primary)',fontWeight:700}}>亮黃側條已全面移除</strong>，任何底色都不用。</p></div>
+
+  <div><p className="lbl">Icon 圖示 — 淺灰底圖磚（唯一一種圖磚），圖示置中</p><div className="row">
+    {['user-plus','star','chart-column','ticket'].map(n=><Icon key={n} name={n} tile tileSize={48} />)}
+    <span style={{display:'inline-flex',gap:12,padding:'8px 12px',borderRadius:12,background:'#3D3D3D'}}>
+      {['gift','store'].map(n=><Icon key={n} name={n} tile tileTone="inverse" tileSize={48} />)}
+    </span>
+    <span style={{width:1,height:36,background:'var(--border-default)'}} />
+    {['var(--text-primary)','var(--oc-gray-700)','var(--oc-purple)','var(--oc-orange)'].map(c=><Icon key={c} name="ticket" size={32} color={c} />)}
+  </div>
+  <p className="note">圖磚＝淺灰底 + 淺灰圖示，48px、8px 圓角，圖示上下左右置中。多數情況不加圖磚，直接用裸圖示。<strong style={{color:'var(--text-primary)',fontWeight:700}}>不可以出現品牌黃底或淺黃底的 icon</strong>（表格的 32px 黃色勾選圓點除外，那是勾選記號）。</p></div>
+
+  <div><p className="lbl">Badge 標籤 vs 編號 — 標籤放分類資訊，編號用淺灰字</p><div className="row">
+    <Badge tone="warning">餐飲</Badge><Badge tone="info">零售</Badge><Badge tone="success">美業</Badge>
+    <Badge tone="brand">限時</Badge><Badge tone="solid">2×</Badge><Badge tone="neutral">NEW</Badge>
+    <span style={{width:1,height:32,background:'var(--border-default)'}} />
+    <span style={{fontSize:15,fontWeight:700,letterSpacing:'.14em',color:'var(--oc-gray-400)'}}>CASE 01</span>
+    <span style={{display:'inline-flex',alignItems:'center',justifyContent:'center',width:40,height:40,borderRadius:8,background:'#333333',color:'#FFEA00',fontSize:18,fontWeight:800,lineHeight:1}}>01</span>
+    <span style={{width:1,height:32,background:'var(--border-default)'}} />
+    <Logo height={24} assetBase="../../assets" /><Logo brand="ofb" height={28} assetBase="../../assets" />
+  </div>
+  <p className="note">標籤承載的是<strong style={{color:'var(--text-primary)',fontWeight:700}}>分類資訊</strong>——產業別、狀態、管道、時間序、方案、地區等等，不限於此；判準是「這個字能幫讀者歸類或定位這頁的內容」。<strong style={{color:'var(--text-primary)',fontWeight:700}}>數字編號不要做成標籤</strong>：純序號（CASE 01、頁面編號）用淺灰字 <code style={{fontFamily:'var(--font-mono)'}}>#ADADAD</code>，有順序的列點用 40×40、<code style={{fontFamily:'var(--font-mono)'}}>#333333</code> 底 + 品牌黃字 <code style={{fontFamily:'var(--font-mono)'}}>#FFEA00</code> 的圓角方塊。同一頁出現多種輔助色標籤，只在顏色本身承載分類時使用；否則一頁一種輔助色。</p></div>
+ </div>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

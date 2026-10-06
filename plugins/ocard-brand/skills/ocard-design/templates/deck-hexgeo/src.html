@@ -1,0 +1,834 @@
+<title>Ocard 簡報 · 六角幾何拼貼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap">
+<style>
+/* One light look on purpose: this is a print-like brand board for white-ground slides */
+:root{
+  color-scheme:light;
+  --ink:#333333;--ink-2:#5C5C5C;--light:#ADADAD;--line:#E8E8E8;--tile:#F2F2F2;--sunken:#FAFAFA;
+  --yellow:#FFEA00;--orange:#FC6815;--orange-t:#FFE8DC;--purple:#B287FD;--purple-d:#8B5CF6;--teal:#24C6B7;--teal-d:#1AA89B;
+  --font:"Montserrat","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#FFFFFF;color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.6}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:48px 96px;display:flex;flex-direction:column;gap:64px}
+header{display:flex;flex-direction:column;gap:12px;max-width:760px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;color:var(--light)}
+h1{margin:0;font-size:36px;font-weight:900;letter-spacing:-.02em;line-height:1.2;display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;text-wrap:balance}
+h2{margin:0;font-size:22px;font-weight:800;line-height:1.3;display:flex;align-items:center;gap:10px}
+h2 .n{font-size:13px;font-weight:700;color:var(--light);letter-spacing:.08em}
+.lead{margin:0;color:var(--ink-2);max-width:64ch}
+section{display:flex;flex-direction:column;gap:20px}
+.note{margin:0;color:var(--ink-2);max-width:68ch}
+.hd{display:inline-block;width:16px;height:18px;background:var(--yellow);flex:0 0 auto}
+
+/* swatches */
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.mp{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;box-shadow:inset 0 0 0 1px var(--line)}
+.mp .a,.mp .b{width:36px;height:36px;border-radius:8px;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(51,51,51,.08)}
+.mp .arr{color:var(--light);font-weight:700}
+.mp div{font-size:13px;line-height:1.5;color:var(--ink-2)}
+.mp div b{display:block;color:var(--ink);font-size:14px}
+
+/* type scale */
+.tblw{overflow-x:auto;border-radius:12px;box-shadow:inset 0 0 0 1px var(--line)}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle;font-variant-numeric:tabular-nums}
+th{font-size:13px;color:var(--ink-2);font-weight:700;background:var(--sunken)}
+tr:last-child td{border-bottom:0}
+td.sp{white-space:nowrap;overflow:hidden;max-width:420px}
+
+/* components */
+.kit{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.kc{border-radius:12px;box-shadow:inset 0 0 0 1px var(--line);overflow:hidden;display:flex;flex-direction:column}
+.kc .stage{position:relative;height:150px;background:var(--sunken);overflow:hidden;display:flex;align-items:center;justify-content:center;gap:12px}
+.kc .cap{padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.kc .cap b{font-size:15px}
+.kc .cap span{font-size:13px;color:var(--ink-2);line-height:1.55}
+
+/* tags */
+.tags{display:flex;flex-wrap:wrap;gap:10px}
+.tg{display:flex;flex-direction:column;gap:2px;padding:12px 16px;border-radius:12px;box-shadow:inset 0 0 0 1px var(--line);max-width:340px}
+.tg b{font-size:15px}
+.tg span{font-size:13px;color:var(--ink-2);line-height:1.55}
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.nm{padding:16px;border-radius:12px;background:var(--sunken);display:flex;flex-direction:column;gap:6px}
+.nm b{font-size:20px;font-weight:800}
+.nm i{font-style:normal;font-size:12px;font-weight:700;color:var(--ink-2);letter-spacing:.06em}
+.nm span{font-size:13px;color:var(--ink-2);line-height:1.6}
+.nm.pick{background:#FFFFFF;box-shadow:inset 0 0 0 2px var(--ink)}
+
+/* slides */
+.slides{display:grid;grid-template-columns:1fr;gap:24px}
+.sl-cap{font-size:14px;color:var(--ink-2);display:flex;gap:10px;align-items:baseline;margin-bottom:8px}
+.sl-cap b{color:var(--ink)}
+.frame{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:8px;box-shadow:0 0 0 1px var(--line)}
+.slide{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0;transform:scale(var(--k,1));overflow:hidden;background:#FAFAFA;color:var(--ink);font-family:var(--font)}
+.slide p,.slide h3,.slide h4{margin:0}
+.side{position:absolute;left:0;top:0;bottom:0;width:112px;background:#FFFFFF;border-radius:0 40px 40px 0;box-shadow:6px 0 28px rgba(51,51,51,.07);z-index:4}
+.side-mark{position:absolute;top:48px;left:50%;width:52px;height:auto;transform:translateX(-50%)}
+.side-handle{position:absolute;bottom:48px;left:50%;transform:translateX(-50%) rotate(180deg);writing-mode:vertical-rl;font-size:14px;font-weight:500;letter-spacing:.04em;color:#ADADAD;white-space:nowrap}
+.s-eb{position:absolute;top:64px;left:176px;font-size:14px;font-weight:700;letter-spacing:.14em;color:var(--light)}
+.s-logo{position:absolute;left:176px;bottom:34px;height:20px;width:auto}
+.s-pn{position:absolute;right:64px;bottom:34px;font-size:14px;color:#C2C2C2;font-variant-numeric:tabular-nums}
+.s-pn span{color:var(--ink)}
+.h-disp{font-size:72px;font-weight:900;letter-spacing:-.03em;line-height:1.08}
+.h-tt{font-size:48px;font-weight:900;letter-spacing:-.02em;line-height:1.15;display:flex;align-items:flex-start;gap:14px}
+.h-tt .hd,.h-disp .hd{width:19px;height:22px;margin-top:.18em}
+.h-sub{font-size:22px;font-weight:700;line-height:1.35;display:flex;align-items:center;gap:12px}
+.h-sub .dot{width:14px;height:16px;flex:0 0 auto}
+.t-body{font-size:18px;line-height:1.7;color:var(--ink-2)}
+.t-tag{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 30px;font-size:15px;font-weight:700;letter-spacing:.04em;color:var(--ink)}
+.t-stat{font-size:56px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.t-cap{font-size:14px;line-height:1.5;color:var(--ink-2)}
+.hx{position:absolute}
+.ph{display:flex;align-items:center;justify-content:center;background:#E8E8E8;color:#ADADAD}
+.ph svg{width:44px;height:44px}
+.badge{display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--yellow)}
+.badge svg{width:42%;height:42%}
+.badge.g{background:var(--tile);color:var(--ink)}
+.chip{display:flex;align-items:baseline;gap:12px;height:68px;padding:0 30px;background:#FFFFFF;align-items:center}
+@media (max-width:640px){h1{font-size:28px}}
+/* ---------- adjust panel (same behaviour as the white-ground template) ---------- */
+:root{--chrome-surface:#FFFFFF;--chrome-sunken:#FAFAFA;--chrome-text:#333333;--chrome-text-2:#5C5C5C;--chrome-muted:#8A8A8A;--chrome-line:#E8E8E8;--chrome-line-strong:#D6D6D6;--chrome-focus:#FFF8C8}
+.adj-btn{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:29;font:inherit;font-size:15px;font-weight:700;height:44px;padding:0 18px;border-radius:999px;border:0;background:var(--ink);color:#FFFFFF;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(51,51,51,.18)}
+.adj-btn svg{width:18px;height:18px}
+.adj-btn:focus-visible,.opt:focus-visible,.tw-chip:focus-visible,.icl-o button:focus-visible{outline:1px solid var(--chrome-text);box-shadow:0 0 0 3px var(--chrome-focus)}
+.cap-tw{margin-left:auto;display:flex;align-items:center;gap:10px}
+.cap-tw em{font-style:normal;font-size:13px;color:var(--chrome-muted)}
+.tw-chip{white-space:nowrap;font:inherit;font-size:13px;line-height:1;padding:7px 12px;border-radius:999px;border:0;background:#FFFFFF;color:var(--chrome-text-2);box-shadow:inset 0 0 0 1px var(--chrome-line-strong);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.tw-chip svg{width:14px;height:14px}
+.sl-cap{flex-wrap:wrap}
+.sl-cap .now{display:none;font-size:12px;font-weight:700;background:var(--ink);color:#FFFFFF;border-radius:4px;padding:2px 7px}
+.open-panel .item.editing .sl-cap .now{display:inline-block}
+.open-panel .slides.has-editing .item:not(.editing){opacity:.35;transition:opacity 180ms}
+.scrim{position:fixed;inset:0;background:rgba(26,26,26,.35);z-index:30;opacity:0;pointer-events:none;transition:opacity 180ms cubic-bezier(.2,0,0,1)}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);z-index:31;background:var(--chrome-surface);border-left:1px solid var(--chrome-line);display:flex;flex-direction:column;transform:translateX(100%);transition:transform 280ms cubic-bezier(.2,0,0,1);padding-top:env(safe-area-inset-top,0px)}
+.open-panel .panel{transform:none}
+.open-panel .scrim{opacity:1;pointer-events:auto}
+.open-panel .adj-btn{display:none}
+.adj-tip{position:fixed;top:calc(68px + env(safe-area-inset-top,0px));right:16px;z-index:29;width:300px;padding:14px 40px 14px 16px;border-radius:12px;background:#FFFFFF;color:#333333;font-size:13px;line-height:1.6;box-shadow:0 0 0 1px #E8E8E8,0 8px 24px rgba(51,51,51,.16)}.adj-tip[hidden]{display:none}.adj-tip b{display:block;font-size:14px;font-weight:700;margin-bottom:4px}.adj-tip button{position:absolute;top:8px;right:8px;width:28px;height:28px;border:0;border-radius:6px;background:transparent;color:#333333;font:inherit;font-size:18px;line-height:1;cursor:pointer}.open-panel .adj-tip{display:none}@media print{.adj-tip{display:none!important}}
+@media (min-width:760px){.panel{width:min(380px,44vw)}.open-panel .scrim{opacity:0;pointer-events:none}.open-panel .wrap{margin-right:min(380px,44vw);margin-left:0;max-width:none;padding-inline:20px}}
+@media (max-width:759.98px){.panel{top:auto;left:0;width:100%;height:56vh;border-left:0;border-top:1px solid var(--chrome-line);border-radius:16px 16px 0 0;transform:translateY(100%)}.open-panel .panel{transform:none}.open-panel .scrim{opacity:0;pointer-events:none}.open-panel .wrap{padding-bottom:58vh}}
+/* finished deck (outside Claude): no adjust panel, photos fixed */
+body:not(.can-edit) .adj-btn,body:not(.can-edit) .cap-tw,body:not(.can-edit) .panel,body:not(.can-edit) .scrim,body:not(.can-edit) .adj-tip,body:not(.can-edit) .lead{display:none!important}
+body:not(.can-edit) .ph{pointer-events:none;cursor:default}
+.adj-tip{display:none!important}
+.okit-fix{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:28;padding:4px;border-radius:999px;background:var(--chrome-surface);box-shadow:0 4px 16px rgba(51,51,51,.14)}
+body.can-edit .okit-fix{right:136px}
+.open-panel .okit-fix{display:none}
+@media (max-width:640px){body.can-edit .okit-fix{top:calc(68px + env(safe-area-inset-top,0px));right:16px}}
+.p-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--chrome-line)}
+.p-head h2{margin:0;font-size:17px;font-weight:700;flex:1}
+.x{font:inherit;width:36px;height:36px;border-radius:8px;border:0;background:transparent;color:var(--chrome-text);cursor:pointer;font-size:22px;line-height:1}
+.p-body{flex:1;overflow-y:auto;padding:8px 20px 32px}
+.p-note{font-size:13px;line-height:1.6;color:var(--chrome-text-2);margin:12px 0 4px}
+.p-scope{margin:14px 0 0;padding:12px 14px;border-radius:8px;background:var(--chrome-sunken);font-size:13px;line-height:1.6;color:var(--chrome-text-2)}
+.p-scope:empty{display:none}
+.p-scope button{font:inherit;font-weight:700;color:var(--chrome-text);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.p-foot{display:flex;align-items:center;gap:12px;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--chrome-line)}
+.p-foot small{flex:1;font-size:12px;color:var(--chrome-muted);line-height:1.5}
+.p-foot button{font:inherit;font-size:14px;font-weight:700;height:36px;padding:0 14px;border-radius:999px;border:0;background:transparent;color:var(--chrome-text);box-shadow:inset 0 0 0 1px var(--chrome-line-strong);cursor:pointer}
+.grp{margin-top:20px}
+.grp>h3{margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--chrome-muted)}
+.row{padding:16px 0;border-top:1px solid var(--chrome-line)}
+.row[hidden],.grp[hidden]{display:none!important}
+.row-h{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.row-h b{font-size:15px;font-weight:700}
+.row-h span{font-size:12px;color:var(--chrome-muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.scope{font-style:normal;font-size:11px;font-weight:700;line-height:1;padding:4px 7px;border-radius:999px;background:var(--chrome-sunken);color:var(--chrome-text-2);box-shadow:inset 0 0 0 1px var(--chrome-line)}
+.scope.one{background:#FFF8C8;color:#333333;box-shadow:none}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.opt{font:inherit;text-align:left;border:0;border-radius:8px;padding:8px;background:var(--chrome-sunken);color:var(--chrome-text);cursor:pointer;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 0 0 1px var(--chrome-line)}
+.opt[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--chrome-text);background:#FFFFFF}
+.opt svg{width:100%;height:auto;display:block;border-radius:4px;background:#FFFFFF}
+.opt b{font-size:13px;font-weight:700;line-height:1.3}
+.opt.swo{align-items:center;text-align:center;padding:10px 6px}
+.opt.swo i{width:24px;height:24px;border-radius:999px;display:block}
+.hint{font-size:12px;color:var(--chrome-muted);margin:8px 0 0;line-height:1.5}
+.icl{display:flex;flex-direction:column;gap:12px}
+.icl-r{display:flex;flex-direction:column;gap:6px}
+.icl-n{font-size:13px;font-weight:700;line-height:1.4}
+.icl-o{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.icl-o button{font:inherit;font-size:12px;gap:6px;padding:8px 6px;border:0;border-radius:8px;background:var(--chrome-sunken);color:var(--chrome-text);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px var(--chrome-line)}
+.icl-o button[aria-pressed="true"]{background:#FFFFFF;box-shadow:inset 0 0 0 2px var(--chrome-text)}
+.icl-o svg{width:20px;height:20px;flex:0 0 auto}
+/* numbers added in front of headings */
+.nbx{flex:0 0 auto;font-style:normal;font-family:var(--font);font-variant-numeric:tabular-nums}
+.nbx.hexn{width:34px;height:39px;display:inline-flex;align-items:center;justify-content:center;background:var(--ink);color:var(--yellow);font-size:15px;font-weight:800}
+.badge .bnum{font-family:var(--font);font-size:30px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.row.dim .icl{opacity:.45}
+.ph{cursor:pointer;overflow:hidden}
+.ph.has-img{cursor:grab}.ph.dragging{cursor:grabbing}
+.ph.has-img>svg{display:none}
+.ph .ph-img{position:absolute;display:none;max-width:none;pointer-events:none;user-select:none}
+.ph.has-img .ph-img{display:block}
+.ph.drop{filter:brightness(.92)}
+.ppl{display:flex;flex-direction:column;gap:12px}
+.pp{display:flex;gap:12px;align-items:center}
+.pp-th{position:relative;flex:0 0 96px;aspect-ratio:4/3;border-radius:8px;background:var(--chrome-sunken);box-shadow:inset 0 0 0 1px var(--chrome-line);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--chrome-muted)}
+.pp-th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.has-ph .pp-th img{display:block}.has-ph .pp-th span{display:none}
+.pp-c{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pp-c b{font-size:13px}
+.pp-b{display:flex;gap:6px;flex-wrap:wrap}
+.pbtn{font:inherit;font-size:13px;font-weight:700;height:32px;padding:0 12px;border-radius:999px;border:0;background:transparent;color:var(--chrome-text);box-shadow:inset 0 0 0 1px var(--chrome-line-strong);cursor:pointer}
+.pbtn.ink{background:var(--ink);color:#FFFFFF;box-shadow:none}
+.pbtn:disabled{opacity:.4;cursor:default}
+.hic{flex:0 0 auto;width:26px;height:26px;display:inline-flex}
+.hic svg{width:100%;height:100%}
+.opts.two{grid-template-columns:repeat(2,1fr)}
+.nbx.txtn{font-size:22px;font-weight:800;letter-spacing:-.01em}
+
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">OCARD 簡報 · 六角幾何拼貼</span>
+  <h1>簡報標題<i class="hd" data-o="v" aria-hidden="true"></i></h1>
+  <p class="lead">捲到要改的那一頁，按右上「調整」。照片可以直接拖到灰色六角形上。</p>
+</header>
+<section>
+  <div class="slides" id="slides">
+
+  <!-- cover -->
+  <div class="item" data-id="cover"><div class="sl-cap"><b>封面</b>直向六角膠囊拼貼，墨、黃、灰三塊出血色塊；左側白色品牌側欄</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div>
+    <div style="position:absolute;left:176px;top:0;bottom:0;width:560px;display:flex;flex-direction:column;justify-content:center;gap:28px">
+      <h3 class="h-disp">驅動顧客<br><span style="display:inline-flex;align-items:flex-start;gap:16px">終身價值<i class="hx hd" data-o="v" style="position:relative"></i></span></h3>
+      <p class="t-body" style="max-width:460px">從招募、分級到自動化溝通，用一套系統經營每一位回訪的顧客。</p>
+    </div>
+    <p class="t-cap" style="position:absolute;left:176px;bottom:56px;font-weight:700;letter-spacing:.08em;color:#ADADAD">2026 年度產品簡報</p>
+    <div class="hx" data-o="v" style="left:660px;top:300px;width:210px;height:360px;background:#F2F2F2"></div>
+    <div class="hx badge" data-o="v" style="left:628px;top:322px;width:80px;height:92px" data-ic="phone">__IC_PHONE__</div>
+    <div class="hx ph" data-o="v" style="left:896px;top:86px;width:206px;height:340px">__IC_IMG__</div>
+    <div class="hx" data-o="v" style="left:896px;top:456px;width:206px;height:340px;background:#333333"></div>
+    <div class="hx badge g" data-o="v" style="left:1046px;top:580px;width:80px;height:92px" data-ic="chart">__IC_CHART__</div>
+    <div class="hx" data-o="v" style="left:1128px;top:250px;width:206px;height:340px;background:#FFEA00"></div>
+    <div class="hx" data-o="v" style="left:1128px;top:-140px;width:206px;height:360px;background:#F2F2F2"></div>
+  </div></div></div>
+
+  <!-- cover B -->
+  <div class="item" data-id="coverB"><div class="sl-cap"><b>封面 · 第二款</b>墨色滿版底，左上品牌黃六角拼貼、右上六角照片，大標題落在右下（參考第二份版型封面）</div>
+  <div class="frame"><div class="slide" style="background:#333333">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div>
+    <div class="hx" data-o="v" style="left:150px;top:-150px;width:190px;height:330px;background:#FFEA00"></div>
+    <div class="hx" data-o="v" style="left:322px;top:186px;width:174px;height:200px;background:#FFEA00"></div>
+    <div class="hx" data-o="v" style="left:146px;top:214px;width:130px;height:150px;background:#4A4A4A"></div>
+    <div class="hx ph" data-o="h" style="left:820px;top:56px;width:400px;height:300px;background:#4A4A4A;color:#8A8A8A">__IC_IMG__</div>
+    <div style="position:absolute;left:520px;top:400px;display:flex;flex-direction:column;gap:22px">
+      <h3 class="h-disp" style="color:#FFFFFF">驅動顧客<br><span style="display:inline-flex;align-items:flex-start;gap:16px">終身價值<i class="hx hd" data-o="v" style="position:relative"></i></span></h3>
+      <p class="t-body" style="color:#D6D6D6;max-width:560px">從招募、分級到自動化溝通，用一套系統經營每一位回訪的顧客。</p>
+    </div>
+    <p class="t-cap" style="position:absolute;left:176px;bottom:56px;font-weight:700;letter-spacing:.08em;color:#ADADAD">2026 年度產品簡報</p>
+  </div></div></div>
+
+  <!-- content -->
+  <div class="item" data-id="content"><div class="sl-cap"><b>內文 · 雙欄</b>橫向六角膠囊照片，黃色標籤壓在照片角落</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">COMPANY OVERVIEW</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">使命與願景<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div class="hx" data-o="h" style="left:860px;top:150px;width:640px;height:200px;background:#F2F2F2"></div>
+    <div class="hx" data-o="h" style="left:-200px;top:520px;width:600px;height:240px;background:#F2F2F2"></div>
+    <div style="position:absolute;left:212px;top:250px;width:430px;display:flex;flex-direction:column;gap:14px">
+      <h4 class="h-sub"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>使命</h4>
+      <p class="t-body">讓每個實體品牌，不必自己開發 App ，也能像大品牌一樣經營會員。</p>
+    </div>
+    <div class="hx ph" data-o="h" style="left:680px;top:216px;width:504px;height:180px">__IC_IMG__</div>
+    <div class="hx t-tag" data-o="h" style="left:1006px;top:188px;background:#FFEA00">#會員經營</div>
+    <div class="hx ph" data-o="h" style="left:180px;top:462px;width:440px;height:180px">__IC_IMG__</div>
+    <div class="hx t-tag" data-o="h" style="left:452px;top:434px;background:#FFEA00">#自動化</div>
+    <div style="position:absolute;left:700px;top:470px;width:470px;display:flex;flex-direction:column;gap:14px">
+      <h4 class="h-sub"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>願景</h4>
+      <p class="t-body">每一次到店消費，都能累積成品牌和顧客之間的長期關係。</p>
+    </div>
+    <span class="s-pn"><span>02</span> / 13</span>
+  </div></div></div>
+
+  <!-- stats -->
+  <div class="item" data-id="stats"><div class="sl-cap"><b>數據 · 指標列</b>左邊寫指標名稱與說明，右邊同一列的色塊上方放數字；同一組數據只出現一次</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">RESULTS</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">導入一年的成效<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div style="position:absolute;left:176px;top:236px;width:500px;display:flex;flex-direction:column;gap:8px"><h4 class="h-sub"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>累積會員</h4><p class="t-body" style="padding-left:26px">LINE 加好友即成為會員，門市掃碼 10 秒完成。</p></div>
+    <div style="position:absolute;left:176px;top:350px;width:500px;display:flex;flex-direction:column;gap:8px"><h4 class="h-sub"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>回訪率提升</h4><p class="t-body" style="padding-left:26px">集點卡與生日禮，讓顧客有理由再回來。</p></div>
+    <div style="position:absolute;left:176px;top:464px;width:500px;display:flex;flex-direction:column;gap:8px"><h4 class="h-sub"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>客單價提升</h4><p class="t-body" style="padding-left:26px">會員分級權益，帶動加購與升級。</p></div>
+    <div class="hx" data-o="h" style="left:930px;top:200px;width:470px;height:96px;background:#E8E8E8"></div>
+    <div class="hx" data-o="h" style="left:740px;top:380px;width:660px;height:96px;background:#FC6815"></div>
+    <div class="hx" data-o="h" style="left:880px;top:560px;width:520px;height:96px;background:#E8E8E8"></div>
+    <div class="hx badge" data-o="v" style="left:1180px;top:84px;width:73px;height:84px" data-ic="chart">__IC_CHART__</div>
+    <div style="position:absolute;left:960px;top:140px;display:flex;align-items:baseline;gap:10px"><span class="t-stat" style="font-size:40px">60,000</span></div>
+    <div style="position:absolute;left:770px;top:320px;display:flex;align-items:baseline;gap:10px"><span class="t-stat" style="font-size:40px">+38%</span></div>
+    <div style="position:absolute;left:910px;top:500px;display:flex;align-items:baseline;gap:10px"><span class="t-stat" style="font-size:40px">+20%</span></div>
+    <span class="s-pn" style="color:#ADADAD"><span>03</span> / 13</span>
+  </div></div></div>
+
+  <!-- chart -->
+  <div class="item" data-id="chart"><div class="sl-cap"><b>數據 · 直向長條</b>直向六角膠囊長條，高度照數值比例，一根橘色重點；數值放在長條頂端上方</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">GROWTH</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">會員數逐季成長<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div style="position:absolute;left:176px;top:250px;width:440px;display:flex;flex-direction:column;gap:18px">
+      <h4 class="h-sub"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>第三季突破 60,000 人</h4>
+      <p class="t-body">門市掃碼加入加上 LINE 推播招募，三個季度會員數成長近三倍。</p>
+      <div style="display:flex;gap:12px;margin-top:6px"><span class="hx t-tag" data-o="h" style="position:relative;background:#F2F2F2">#門市招募</span><span class="hx t-tag" data-o="h" style="position:relative;background:#F2F2F2">#LINE 推播</span></div>
+      <p class="t-cap" style="margin-top:8px">示意數據，資料來源：〔待補〕</p>
+    </div>
+    <div id="bars"></div>
+    <span class="s-pn"><span>04</span> / 13</span>
+  </div></div></div>
+
+  <!-- team -->
+  <div class="item" data-id="team"><div class="sl-cap"><b>三欄 · 六角照片</b>原版圓形大頭照換成六角形，徽章改成墨色六角</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">TEAM</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">導入陪跑團隊<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div class="hx" data-o="v" style="left:1000px;top:-180px;width:240px;height:400px;background:#F2F2F2"></div>
+    <div class="hx" data-o="v" style="left:160px;top:520px;width:240px;height:400px;background:#F2F2F2"></div>
+    <div style="position:absolute;left:336px;right:64px;top:226px;display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px"><div style="position:relative;width:236px;height:205px"><div class="hx ph" data-o="h" style="inset:0">__IC_IMG__</div><div class="hx badge" data-o="v" style="right:-6px;top:-6px;width:50px;height:58px" data-ic="crown">__IC_CROWN__</div></div><h4 class="h-sub" style="margin-top:10px">導入顧問</h4><p class="t-body" style="font-size:16px;line-height:1.6">盤點門市流程，規劃會員招募動線。</p></div>
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px"><div style="position:relative;width:236px;height:205px"><div class="hx ph" data-o="h" style="inset:0">__IC_IMG__</div><div class="hx badge" data-o="v" style="right:-6px;top:-6px;width:50px;height:58px" data-ic="chart">__IC_CHART__</div></div><h4 class="h-sub" style="margin-top:10px">數據分析師</h4><p class="t-body" style="font-size:16px;line-height:1.6">每月檢視回訪與客單，調整權益設計。</p></div>
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px"><div style="position:relative;width:236px;height:205px"><div class="hx ph" data-o="h" style="inset:0">__IC_IMG__</div><div class="hx badge" data-o="v" style="right:-6px;top:-6px;width:50px;height:58px" data-ic="chat">__IC_CHAT__</div></div><h4 class="h-sub" style="margin-top:10px">客服夥伴</h4><p class="t-body" style="font-size:16px;line-height:1.6">門市人員教育訓練與上線後支援。</p></div>
+    </div>
+    <span class="s-pn"><span>05</span> / 13</span>
+  </div></div></div>
+  <!-- summary rows -->
+  <div class="item" data-id="summary"><div class="sl-cap"><b>三行重點</b>短標與說明兩欄一列，細線分隔（取自新版型的 Executive Summary）</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">SUMMARY</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">三句話看懂 Ocard<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div style="position:absolute;left:176px;right:64px;top:268px;display:flex;flex-direction:column">
+      <div style="display:grid;grid-template-columns:300px 1fr;align-items:center;gap:24px;padding:22px 0;border-bottom:1px solid #E8E8E8"><h4 class="h-sub" data-nb="summary">做什麼</h4><p class="t-body">讓實體品牌用 LINE 經營會員，不必另外開發 App 。</p></div>
+      <div style="display:grid;grid-template-columns:300px 1fr;align-items:center;gap:24px;padding:22px 0;border-bottom:1px solid #E8E8E8"><h4 class="h-sub" data-nb="summary">為什麼重要</h4><p class="t-body">獲客成本越來越高，留住老顧客才是穩定的營收來源。</p></div>
+      <div style="display:grid;grid-template-columns:300px 1fr;align-items:center;gap:24px;padding:22px 0"><h4 class="h-sub" data-nb="summary">怎麼做到</h4><p class="t-body">集點、分級、自動推播，把每次消費變成下一次回訪。</p></div>
+    </div>
+    <div class="hx" data-o="h" style="left:1040px;top:-60px;width:330px;height:200px;background:#F2F2F2"></div>
+    <span class="s-pn"><span>06</span> / 13</span>
+  </div></div></div>
+
+  <!-- pain rows -->
+  <div class="item" data-id="pain"><div class="sl-cap"><b>痛點列</b>墨色六角徽章壓在橫向六角膠囊上，右側照片與補充說明</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">PROBLEM</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">門市經營的兩個痛點<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <p class="t-body" style="position:absolute;left:176px;top:196px;width:620px">紙本集點卡容易遺失，店家也看不到誰是常客，行銷只能憑感覺。</p>
+    <div class="hx" data-o="h" style="left:176px;top:337px;width:644px;height:110px;background:#F2F2F2"></div>
+    <div class="hx badge" data-o="v" style="left:176px;top:337px;width:96px;height:110px" data-ic="card">__IC_CARD__</div>
+    <div style="position:absolute;left:330px;top:337px;width:440px;height:110px;display:grid;grid-template-columns:160px 1fr;align-items:center;gap:20px"><h4 class="h-sub">集點卡遺失</h4><p class="t-body" style="font-size:16px;line-height:1.6">顧客忘了帶卡，累積的點數就斷了。</p></div>
+    <div class="hx" data-o="h" style="left:176px;top:477px;width:644px;height:110px;background:#F2F2F2"></div>
+    <div class="hx badge" data-o="v" style="left:176px;top:477px;width:96px;height:110px" data-ic="users">__IC_USERS__</div>
+    <div style="position:absolute;left:330px;top:477px;width:440px;height:110px;display:grid;grid-template-columns:160px 1fr;align-items:center;gap:20px"><h4 class="h-sub">認不出常客</h4><p class="t-body" style="font-size:16px;line-height:1.6">沒有資料，就無法對熟客給專屬優惠。</p></div>
+    <div class="hx ph" data-o="h" style="left:880px;top:196px;width:336px;height:200px">__IC_IMG__</div>
+    <div style="position:absolute;left:880px;top:430px;width:336px;display:flex;flex-direction:column;gap:10px"><h4 class="h-sub"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>為什麼是現在</h4><p class="t-body" style="font-size:16px;line-height:1.6">九成顧客都用 LINE ，加好友就能成為會員，導入門檻已經很低。</p></div>
+    <span class="s-pn"><span>07</span> / 13</span>
+  </div></div></div>
+
+  <!-- layered market -->
+  <div class="item" data-id="market"><div class="sl-cap"><b>市場層疊</b>三塊階梯式橫向六角膠囊由大到小疊下來，數字直接寫在色塊上</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">OPPORTUNITY</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">市場機會<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div style="position:absolute;left:176px;top:430px;width:440px;display:flex;flex-direction:column;gap:14px"><h4 class="h-sub">值得投入的理由</h4><p class="t-body">台灣有大量實體門市仍在用紙本集點，從第一步數位化開始，就有明顯的回訪成長空間。</p><p class="t-cap">示意數據，資料來源：〔待補〕</p></div>
+    <div class="hx" data-o="h" style="left:660px;top:150px;width:760px;height:200px;background:#FFEA00"></div>
+    <div class="hx" data-o="h" style="left:780px;top:330px;width:640px;height:200px;background:#333333"></div>
+    <div class="hx" data-o="h" style="left:900px;top:510px;width:520px;height:200px;background:#E8E8E8"></div>
+    <div style="position:absolute;left:740px;top:178px"><p class="t-tag" style="padding:0;height:auto">全台實體門市</p><p class="t-stat" style="margin-top:8px">30 萬家</p></div>
+    <div style="position:absolute;left:860px;top:358px;color:#FFFFFF"><p class="t-tag" style="padding:0;height:auto;color:#FFFFFF">餐飲與零售</p><p class="t-stat" style="margin-top:8px">12 萬家</p></div>
+    <div style="position:absolute;left:980px;top:538px"><p class="t-tag" style="padding:0;height:auto">近期可導入</p><p class="t-stat" style="margin-top:8px">2 萬家</p></div>
+    <span class="s-pn"><span>08</span> / 13</span>
+  </div></div></div>
+
+  <!-- before / after + band -->
+  <div class="item" data-id="flow"><div class="sl-cap"><b>流程對照＋結論帶</b>三個六角圖示徽章用橘色箭頭串成「導入前 → Ocard → 導入後」流程，底部一條收在內容寬度的品牌黃結論帶</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">SOLUTION</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">Ocard 怎麼解決<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div class="hx badge g" data-o="v" style="left:176px;top:210px;width:84px;height:96px" data-ic="card">__IC_CARD__</div>
+    <div style="position:absolute;left:176px;top:330px;width:290px;display:flex;flex-direction:column;gap:10px"><h4 class="h-sub" data-nb="flow">導入前</h4><p class="t-body">紙本集點、手寫顧客名單，活動成效無從得知。</p></div>
+    <span style="position:absolute;left:376px;top:240px;width:36px;height:36px;color:#FC6815">__IC_NEXT__</span>
+    <div class="hx badge" data-o="v" style="left:546px;top:210px;width:84px;height:96px" data-ic="phone">__IC_PHONE__</div>
+    <div style="position:absolute;left:546px;top:330px;width:290px;display:flex;flex-direction:column;gap:10px"><h4 class="h-sub" data-nb="flow">Ocard 會員系統</h4><p class="t-body">LINE 會員卡、電子集點、會員分級與自動推播。</p></div>
+    <span style="position:absolute;left:746px;top:240px;width:36px;height:36px;color:#FC6815">__IC_NEXT__</span>
+    <div class="hx badge g" data-o="v" style="left:916px;top:210px;width:84px;height:96px" data-ic="chart">__IC_CHART__</div>
+    <div style="position:absolute;left:916px;top:330px;width:290px;display:flex;flex-direction:column;gap:10px"><h4 class="h-sub" data-nb="flow">導入後</h4><p class="t-body">每位顧客的消費都有紀錄，回訪率看得見、也追得到。</p></div>
+    <div class="hx" data-o="h" style="left:281px;top:556px;width:820px;height:76px;background:#FFEA00"></div>
+    <div style="position:absolute;left:341px;width:720px;top:556px;height:76px;display:grid;grid-template-columns:150px 1fr;align-items:center;gap:24px"><h4 class="h-sub">關鍵效益</h4><p class="t-body" style="color:#333333">更多回訪、更少人工，讓店家專心做好服務。</p></div>
+    <span class="s-pn"><span>09</span> / 13</span>
+  </div></div></div>
+
+  <!-- ink half panel + table -->
+  <div class="item" data-id="table"><div class="sl-cap"><b>墨色半版表格</b>右側墨色大色塊放數據表，左側文字與照片</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">TRACTION</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">導入成果<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div style="position:absolute;left:176px;top:210px;width:380px;display:flex;flex-direction:column;gap:14px"><h4 class="h-sub">看得見的成長</h4><p class="t-body">以下是合作品牌導入後的平均表現，數字都來自 Ocard 後台。</p></div>
+    <div class="hx ph" data-o="h" style="left:176px;top:430px;width:380px;height:190px">__IC_IMG__</div>
+    <div class="hx" data-o="h" style="left:600px;top:-70px;width:1000px;height:860px;background:#333333"></div>
+    <div style="position:absolute;left:820px;right:64px;top:150px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:16px">
+      <div style="background:#F2F2F2;border-radius:8px;padding:20px 12px;text-align:center;font-weight:700">指標</div><div style="background:#F2F2F2;border-radius:8px;padding:20px 12px;text-align:center;font-weight:700">成果</div><div style="background:#F2F2F2;border-radius:8px;padding:20px 12px;text-align:center;font-weight:700">期間</div>
+      <div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center">累積會員</div><div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center;font-weight:700">60,000</div><div style="background:#3D3D3D;color:rgba(255,255,255,.7);border-radius:8px;padding:26px 12px;text-align:center">一年</div>
+      <div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center">回訪率</div><div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center;font-weight:700">+38%</div><div style="background:#3D3D3D;color:rgba(255,255,255,.7);border-radius:8px;padding:26px 12px;text-align:center">近 6 個月</div>
+      <div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center">客單價</div><div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center;font-weight:700">+20%</div><div style="background:#3D3D3D;color:rgba(255,255,255,.7);border-radius:8px;padding:26px 12px;text-align:center">近 6 個月</div>
+      <div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center">合作門市</div><div style="background:#3D3D3D;color:#FFFFFF;border-radius:8px;padding:26px 12px;text-align:center;font-weight:700">7,000+</div><div style="background:#3D3D3D;color:rgba(255,255,255,.7);border-radius:8px;padding:26px 12px;text-align:center">目前</div>
+    </div>
+    <p class="t-cap" style="position:absolute;left:820px;top:600px;color:rgba(255,255,255,.7)">示意數據，資料來源：〔待補〕</p>
+    <span class="s-pn" style="color:rgba(255,255,255,.6)"><span style="color:#FFFFFF">10</span> / 13</span>
+  </div></div></div>
+
+  <!-- team cards -->
+  <div class="item" data-id="cards"><div class="sl-cap"><b>團隊照片卡</b>六角照片壓在橫向六角膠囊卡片上，底部用品牌黃重點帶放「我們的優勢」</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">WHY US</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">為什麼選擇我們<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div class="hx" data-o="h" style="left:176px;top:300px;width:500px;height:190px;background:#F2F2F2"></div>
+    <div class="hx ph" data-o="h" style="left:226px;top:220px;width:150px;height:130px">__IC_IMG__</div>
+    <div style="position:absolute;left:400px;top:260px;display:flex;flex-direction:column;gap:2px"><h4 class="h-sub">導入顧問</h4><span class="t-tag" style="padding:0;height:auto;color:#FC6815">10 年零售經驗</span></div>
+    <p class="t-body" style="position:absolute;left:250px;top:370px;width:380px">陪你從第一家門市試點，到全品牌上線。</p>
+    <div class="hx" data-o="h" style="left:716px;top:300px;width:500px;height:190px;background:#F2F2F2"></div>
+    <div class="hx ph" data-o="h" style="left:766px;top:220px;width:150px;height:130px">__IC_IMG__</div>
+    <div style="position:absolute;left:940px;top:260px;display:flex;flex-direction:column;gap:2px"><h4 class="h-sub">數據分析師</h4><span class="t-tag" style="padding:0;height:auto;color:#FC6815">7,000+ 品牌經驗</span></div>
+    <p class="t-body" style="position:absolute;left:790px;top:370px;width:380px">每月檢視會員數據，告訴你下一步該做什麼。</p>
+    <div class="hx" data-o="h" style="left:286px;top:556px;width:820px;height:76px;background:#FFEA00"></div>
+    <div style="position:absolute;left:346px;width:720px;top:556px;height:76px;display:grid;grid-template-columns:150px 1fr;align-items:center;gap:24px"><h4 class="h-sub">我們的優勢</h4><p class="t-body" style="color:#333333">7,000+ 品牌導入經驗；從招募、經營到分析，一個團隊負責到底。</p></div>
+    <span class="s-pn"><span>11</span> / 13</span>
+  </div></div></div>
+
+  <!-- bar chart + legend -->
+  <div class="item" data-id="budget"><div class="sl-cap"><b>長條圖＋圖例</b>直向六角膠囊長條照比例，圖例用分類六角點，一根橘色重點</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div><span class="s-eb">PLAN</span>
+    <h3 class="h-tt" style="position:absolute;left:176px;top:104px">預算分配<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+    <div style="position:absolute;left:176px;top:220px;width:360px;display:flex;flex-direction:column;gap:14px"><h4 class="h-sub">第一年的投入重點</h4><p class="t-body">把最多資源放在會員招募，先把顧客名單建起來，再談分級與推播。</p><p class="t-cap">示意數據</p></div>
+    <div id="bars2"></div>
+    <div style="position:absolute;left:1000px;top:300px;display:flex;flex-direction:column;gap:26px">
+      <div><h4 class="h-sub" style="font-size:20px"><i class="hx dot" data-o="v" style="position:relative;background:#FC6815"></i>會員招募</h4><p class="t-cap" style="margin-top:4px;padding-left:28px">門市掃碼、 LINE 廣告</p></div>
+      <div><h4 class="h-sub" style="font-size:20px"><i class="hx dot" data-o="v" style="position:relative;background:#ADADAD"></i>分級權益</h4><p class="t-cap" style="margin-top:4px;padding-left:28px">生日禮、升等禮</p></div>
+      <div><h4 class="h-sub" style="font-size:20px"><i class="hx dot" data-o="v" style="position:relative;background:#D6D6D6"></i>自動推播</h4><p class="t-cap" style="margin-top:4px;padding-left:28px">回訪提醒、喚醒訊息</p></div>
+    </div>
+    <span class="s-pn"><span>12</span> / 13</span>
+  </div></div></div>
+
+  <!-- closing + honeycomb -->
+  <div class="item" data-id="closing"><div class="sl-cap"><b>結尾聯絡</b>右側蜂巢拼貼（墨、黃、灰與照片），底部細線上的聯絡資訊</div>
+  <div class="frame"><div class="slide">
+    <div class="side"><img class="side-mark" src="__MARK__" alt="Ocard for Business"><span class="side-handle">@ocard.for.business</span></div>
+    <div style="position:absolute;left:176px;top:150px;width:520px;display:flex;flex-direction:column;gap:20px">
+      <h3 class="h-disp" style="display:flex;align-items:flex-start;gap:16px">下一步<i class="hx hd" data-o="v" style="position:relative"></i></h3>
+      <p class="h-sub">一起把顧客留下來</p>
+      <span style="width:40px;height:40px;color:#FC6815;margin-top:30px">__IC_ARROW__</span>
+      <p class="t-body">約一場 30 分鐘的線上診斷，我們幫你看看門市最適合從哪一步開始。</p>
+    </div>
+    <div id="honey"></div>
+    <div style="position:absolute;left:176px;right:64px;top:628px;border-top:1px solid #E8E8E8;padding-top:18px;display:flex;justify-content:space-between;font-size:15px;font-weight:700;letter-spacing:.04em">
+      <span>Ocard for Business</span><span>business@ocard.co</span><span>02-2755-1568</span>
+    </div>
+  </div></div></div>
+
+  </div>
+</section>
+</div>
+
+<button class="adj-btn" id="btn-adjust" type="button" aria-controls="panel" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>調整</button>
+<div class="adj-tip" id="adj-tip" hidden><b>請先進入編輯模式</b>按 Claude Design 上方工具列的「Edit」，調整面板就會自動打開。沒有進入編輯，調整不會存檔。<button type="button" id="adj-tip-x" aria-label="關閉">×</button></div>
+<div class="scrim" id="scrim"></div>
+<input type="file" id="ph-file" accept="image/*" hidden>
+<aside class="panel" id="panel" aria-label="調整">
+  <div class="p-head"><h2 id="p-title">調整示意頁</h2><button class="x" id="p-close" type="button" aria-label="關閉">×</button></div>
+  <div class="p-body" id="p-body">
+    <p class="p-note">選項都在 Ocard 品牌規範內；圖示來自 Ocard 統一使用的 Lucide。調整會即時套用，並記在這台電腦的瀏覽器裡，不會改到別人看到的版本。</p>
+    <div class="p-scope" id="p-scope"></div>
+  </div>
+  <div class="p-foot"><small>捲到要改的那一頁再按「調整」，面板只會列出那一頁的選項。</small><button id="p-reset" type="button">恢復預設</button></div>
+</aside>
+<template id="ic-chart">__IC_CHART__</template>
+<div class="okit-fix" id="okit-mount" data-noprint></div>
+<!--OCARD-KIT-HEAD-->
+<script data-ocard-after>
+(function(){
+  /* the Ocard logo mark outline: a regular hexagon whose corners are rounded in proportion to its size.
+     'h' = flat top and bottom, points left and right; 'v' = points top and bottom. Longer boxes stretch the flat sides only. */
+  var R3=Math.sqrt(3),T=0.2467,K=0.6186;
+  function corners(V,t){
+    var f=function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);},pts=[];
+    V.forEach(function(v,i){
+      var a=V[(i+V.length-1)%V.length],c=V[(i+1)%V.length];
+      function tw(q,d){var dx=q[0]-v[0],dy=q[1]-v[1],L=Math.hypot(dx,dy);return [v[0]+dx/L*d,v[1]+dy/L*d];}
+      pts.push([tw(a,t),tw(a,t*(1-K)),tw(c,t*(1-K)),tw(c,t)]);
+    });
+    var d='M'+f(pts[0][3]);
+    pts.slice(1).concat(pts.slice(0,1)).forEach(function(p){d+='L'+f(p[0])+'C'+f(p[1])+' '+f(p[2])+' '+f(p[3]);});
+    return d+'Z';
+  }
+  function hexPath(w,h,o){
+    if(o==='v'){var d=hexPath(h,w,'h');return d.replace(/(-?[\d.]+),(-?[\d.]+)/g,function(m,x,y){return y+','+x;});}
+    var s=h/R3,oy=0,H=h;
+    if(w<2*s){s=w/2;H=s*R3;oy=(h-H)/2;}
+    var V=[[0,oy+H/2],[s/2,oy],[w-s/2,oy],[w,oy+H/2],[w-s/2,oy+H],[s/2,oy+H]];
+    return corners(V,T*s);
+  }
+  function shape(){
+    document.querySelectorAll('[data-o]').forEach(function(el){
+      var w=el.offsetWidth,h=el.offsetHeight;if(!w||!h)return;
+      var k=w+'x'+h+el.dataset.o;if(el._hk===k)return;el._hk=k;
+      el.style.clipPath="path('"+hexPath(w,h,el.dataset.o)+"')";
+    });
+  }
+  /* bar chart: heights to scale (members per quarter, sample figures) */
+  var data=[['Q1',21000,'#E8E8E8'],['Q2',38000,'#E8E8E8'],['Q3',60000,'#FC6815']],max=60000,base=720,top=250,W=150,gap=28,x0=680;
+  var bars=document.getElementById('bars'),html='';
+  data.forEach(function(d,i){
+    var h=Math.round((base-top)*d[1]/max)+90,x=x0+i*(W+gap);
+    html+='<div class="hx" data-o="v" style="left:'+x+'px;top:'+(base-h+60)+'px;width:'+W+'px;height:'+h+'px;background:'+d[2]+'"></div>';
+    html+='<div style="position:absolute;left:'+x+'px;width:'+W+'px;top:'+(base-h+60-74)+'px;text-align:center"><div class="t-stat" style="font-size:32px">'+(d[1]/10000).toFixed(1)+' 萬</div><div class="t-cap" style="color:#333333;font-weight:700;margin-top:4px">'+d[0]+' 2026</div></div>';
+  });
+  html+='<div class="hx badge" data-o="v" data-ic="chart" style="left:1180px;top:84px;width:73px;height:84px">'+document.getElementById('ic-chart').innerHTML+'</div>';
+  bars.innerHTML=html;
+  /* budget split, bars to scale */
+  var d2=[[40,'#FC6815'],[35,'#ADADAD'],[25,'#D6D6D6']],h2='',bx=600,bw=110,bg=24,bb=640,bt=270;
+  d2.forEach(function(d,i){var h=Math.round((bb-bt)*d[0]/40),x=bx+i*(bw+bg);
+    h2+='<div class="hx" data-o="v" style="left:'+x+'px;top:'+(bb-h)+'px;width:'+bw+'px;height:'+(h+120)+'px;background:'+d[1]+'"></div>';
+    h2+='<div style="position:absolute;left:'+x+'px;width:'+bw+'px;top:'+(bb-h-44)+'px;text-align:center"><span class="t-stat" style="font-size:32px">'+d[0]+'%</span></div>';});
+  document.getElementById('bars2').innerHTML=h2;
+  /* honeycomb: original arrangement, each hexagon in logo orientation */
+  var hs=104,hh=hs*Math.sqrt(3),cells=[[0,1,'#FFEA00'],[1,0,'#F2F2F2'],[1,1,'img'],[2,0,'#333333'],[2,1,'#E8E8E8'],[3,0,'#F2F2F2']],hc='',vw=154,vh=176;
+  cells.forEach(function(c){var cx=760+c[0]*hs*1.5+hs,cy=80+c[1]*hh+(c[0]%2?hh/2:0)+hh/2;
+    hc+='<div class="hx'+(c[2]==='img'?' ph':'')+'" data-o="v" style="left:'+(cx-vw/2).toFixed(0)+'px;top:'+(cy-vh/2).toFixed(0)+'px;width:'+vw+'px;height:'+vh+'px'+(c[2]==='img'?'':';background:'+c[2])+'">'+(c[2]==='img'?'__IC_IMG__':'')+'</div>';});
+  document.getElementById('honey').innerHTML=hc;
+  shape();window.hexShape=function(){document.querySelectorAll('[data-o]').forEach(function(e){e._hk=null;});shape();};
+  var ro=new ResizeObserver(function(es){es.forEach(function(e){e.target.style.setProperty('--k',e.contentRect.width/1280);});shape();});
+  window.addEventListener('load',shape);window.addEventListener('resize',shape);document.addEventListener('visibilitychange',shape);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(shape);
+  document.querySelectorAll('.frame').forEach(function(f){ro.observe(f);});
+})();
+</script>
+
+<!--OCARD-KIT-->
+<script data-ocard-after>
+(function(){
+  var KIT=window.OcardKit;
+  var STAR='<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>';
+  var ICONS={star:STAR,
+    users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/>',
+    pulse:'<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
+    phone:'<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+    gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
+    crown:'<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/>',
+    tag:'<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/>',
+    card:'<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>',
+    chart:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+    target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    heart:'<path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>',
+    store:'<path d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"/><path d="M17.774 10.31a1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.451 0 1.12 1.12 0 0 0-1.548 0 2.5 2.5 0 0 1-3.452 0 1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244"/><path d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05"/>',
+    chat:'<path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/>',
+    sprout:'<path d="M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4 4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3"/><path d="M4 9a5 5 0 0 1 8 4 5 5 0 0 1-8-4"/><path d="M5 21h14"/>',
+    bell:'<path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>',
+    calendar:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+    flag:'<path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/>',
+    compass:'<path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/>',
+    rocket:'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+    eye:'<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+    peak:'<path d="m8 3 4 8 5-5 5 15H2L8 3z"/>',
+    sunrise:'<path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/>',
+    userplus:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>',
+    qr:'<path d="M17 12v4a1 1 0 0 1-1 1h-4"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M17 8V7"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M7 17h.01"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="5" height="5" rx="1"/>',
+    idcard:'<path d="M16 10h2"/><path d="M16 14h2"/><path d="M6.17 15a3 3 0 0 1 5.66 0"/><circle cx="9" cy="11" r="2"/><rect x="2" y="5" width="20" height="14" rx="2"/>',
+    repeat:'<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+    enter:'<path d="M11 20H2"/><path d="M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z"/><path d="M11 4H8a2 2 0 0 0-2 2v14"/><path d="M14 12h.01"/><path d="M22 20h-3"/>',
+    calcheck:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
+    bag:'<path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/>',
+    coin:'<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>',
+    trendup:'<path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/>',
+    peakflag:'<path d="m8 3 4 8 5-5 5 15H2L8 3z"/><path d="M4.14 15.08c2.62-1.57 5.24-1.43 7.86.42 2.74 1.94 5.49 2 8.23.19"/>',
+    clock:'<path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/>',
+    hourglass:'<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>',
+    infinity:'<path d="M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8"/>',
+    gem:'<path d="M10.5 3 8 9l4 13 4-13-2.5-6"/><path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z"/><path d="M2 9h20"/>',
+    clipboard:'<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+    route:'<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>',
+    analyze:'<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/>',
+    pie:'<path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>',
+    headset:'<path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/><path d="M21 16v2a4 4 0 0 1-4 4h-5"/>',
+    grad:'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+    lifebuoy:'<circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/>',
+    cardx:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2"/><path d="M3 11h3c.8 0 1.6.3 2.1.9l1.1.9c1.6 1.6 4.1 1.6 5.7 0l1.1-.9c.5-.5 1.3-.9 2.1-.9H21"/>',
+    searchq:'<path d="m13.5 8.5-5 5"/><path d="m8.5 8.5 5 5"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    stamp:'<path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/><path d="M20 15.5a2.5 2.5 0 0 0-2.5-2.5h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1z"/><path d="M5 22h14"/>',
+    userq:'<circle cx="10" cy="7" r="4"/><path d="M10.3 15H7a4 4 0 0 0-4 4v2"/><circle cx="17" cy="17" r="3"/><path d="m21 21-1.9-1.9"/>',
+    eyeoff:'<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>',
+    doc:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+    pencil:'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+    layers:'<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>',
+    database:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+    trophy:'<path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/>'};
+  var IN={star:'星星',users:'會員',pulse:'活動',phone:'手機',gift:'禮物',crown:'皇冠',tag:'標籤',card:'會員卡',chart:'數據',target:'目標',heart:'喜愛',store:'門市',chat:'對話',trophy:'獎盃',sprout:'成長',bell:'通知',calendar:'日期',flag:'旗幟',compass:'羅盤',rocket:'火箭',eye:'遠見',peak:'山峰',sunrise:'日出',userplus:'新會員',qr:'掃碼',idcard:'會員證',repeat:'回訪',enter:'回店',calcheck:'定期',bag:'購物',coin:'金額',trendup:'上升',peakflag:'突破',clock:'時機',hourglass:'沙漏',infinity:'終身',gem:'價值',clipboard:'盤點',route:'動線',analyze:'分析',pie:'占比',headset:'客服',grad:'教育訓練',lifebuoy:'支援',cardx:'卡片遺失',searchq:'找不到',stamp:'集點章',userq:'陌生顧客',eyeoff:'看不見',doc:'紙本',pencil:'手寫',layers:'分級',database:'消費紀錄'};
+  /* icon choices per badge, picked from what that page and heading say; the first one is the default */
+  var CHO={"cover": [["lu-users", "lu-handshake", "lu-heart"], ["lu-gem", "lu-infinity", "lu-trending-up"]], "stats": [["lu-trophy", "lu-calendar-check", "lu-trending-up"]], "chart": [["lu-trending-up", "lu-user-plus", "lu-chart-column-increasing"]], "team": [["lu-clipboard-check", "lu-route", "lu-compass"], ["lu-chart-pie", "lu-scan-search", "lu-chart-no-axes-combined"], ["lu-headset", "lu-graduation-cap", "lu-life-buoy"]], "pain": [["lu-credit-card", "lu-search-x", "lu-stamp"], ["lu-user-search", "lu-eye-off", "lu-id-card"]], "flow": [["lu-file-text", "lu-pencil", "lu-stamp"], ["lu-smartphone", "lu-bell-ring", "lu-layers"], ["lu-database", "lu-trending-up", "lu-repeat"]]};
+  /* icons for the panel: Lucide (lucide-static 0.544.0, ISC), the icon set used by every Ocard template.
+     Paths are inlined by lucide_pick.py, so the deck needs no network. */
+  var LUC={"lu-trending-up": "<path d=\"M16 7h6v6\"/><path d=\"m22 7-8.5 8.5-5-5L2 17\"/>", "lu-repeat": "<path d=\"m17 2 4 4-4 4\"/><path d=\"M3 11v-1a4 4 0 0 1 4-4h14\"/><path d=\"m7 22-4-4 4-4\"/><path d=\"M21 13v1a4 4 0 0 1-4 4H3\"/>", "lu-bell-ring": "<path d=\"M10.268 21a2 2 0 0 0 3.464 0\"/><path d=\"M22 8c0-2.3-.8-4.3-2-6\"/><path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/><path d=\"M4 2C2.8 3.7 2 5.7 2 8\"/>", "lu-calendar-check": "<path d=\"M8 2v4\"/><path d=\"M16 2v4\"/><rect width=\"18\" height=\"18\" x=\"3\" y=\"4\" rx=\"2\"/><path d=\"M3 10h18\"/><path d=\"m9 16 2 2 4-4\"/>", "lu-chart-column-increasing": "<path d=\"M13 17V9\"/><path d=\"M18 17V5\"/><path d=\"M3 3v16a2 2 0 0 0 2 2h16\"/><path d=\"M8 17v-3\"/>", "lu-chart-no-axes-combined": "<path d=\"M12 16v5\"/><path d=\"M16 14v7\"/><path d=\"M20 10v11\"/><path d=\"m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15\"/><path d=\"M4 18v3\"/><path d=\"M8 14v7\"/>", "lu-chart-pie": "<path d=\"M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z\"/><path d=\"M21.21 15.89A10 10 0 1 1 8 2.83\"/>", "lu-clipboard-check": "<rect width=\"8\" height=\"4\" x=\"8\" y=\"2\" rx=\"1\" ry=\"1\"/><path d=\"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2\"/><path d=\"m9 14 2 2 4-4\"/>", "lu-clock": "<path d=\"M12 6v6l4 2\"/><circle cx=\"12\" cy=\"12\" r=\"10\"/>", "lu-coins": "<circle cx=\"8\" cy=\"8\" r=\"6\"/><path d=\"M18.09 10.37A6 6 0 1 1 10.34 18\"/><path d=\"M7 6h1v4\"/><path d=\"m16.71 13.88.7.71-2.82 2.82\"/>", "lu-message-circle": "<path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/>", "lu-compass": "<path d=\"m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z\"/><circle cx=\"12\" cy=\"12\" r=\"10\"/>", "lu-credit-card": "<rect width=\"20\" height=\"14\" x=\"2\" y=\"5\" rx=\"2\"/><line x1=\"2\" x2=\"22\" y1=\"10\" y2=\"10\"/>", "lu-database": "<ellipse cx=\"12\" cy=\"5\" rx=\"9\" ry=\"3\"/><path d=\"M3 5V19A9 3 0 0 0 21 19V5\"/><path d=\"M3 12A9 3 0 0 0 21 12\"/>", "lu-file-text": "<path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M10 9H8\"/><path d=\"M16 13H8\"/><path d=\"M16 17H8\"/>", "lu-door-open": "<path d=\"M11 20H2\"/><path d=\"M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561z\"/><path d=\"M11 4H8a2 2 0 0 0-2 2v14\"/><path d=\"M14 12h.01\"/><path d=\"M22 20h-3\"/>", "lu-eye": "<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", "lu-eye-off": "<path d=\"M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49\"/><path d=\"M14.084 14.158a3 3 0 0 1-4.242-4.242\"/><path d=\"M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143\"/><path d=\"m2 2 20 20\"/>", "lu-flag": "<path d=\"M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528\"/>", "lu-goal": "<path d=\"M12 13V2l8 4-8 4\"/><path d=\"M20.561 10.222a9 9 0 1 1-12.55-5.29\"/><path d=\"M8.002 9.997a5 5 0 1 0 8.9 2.02\"/>", "lu-gem": "<path d=\"M10.5 3 8 9l4 13 4-13-2.5-6\"/><path d=\"M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z\"/><path d=\"M2 9h20\"/>", "lu-graduation-cap": "<path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\"/><path d=\"M22 10v6\"/><path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\"/>", "lu-handshake": "<path d=\"m11 17 2 2a1 1 0 1 0 3-3\"/><path d=\"m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4\"/><path d=\"m21 3 1 11h-2\"/><path d=\"M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3\"/><path d=\"M3 4h8\"/>", "lu-headset": "<path d=\"M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z\"/><path d=\"M21 16v2a4 4 0 0 1-4 4h-5\"/>", "lu-heart": "<path d=\"M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5\"/>", "lu-hourglass": "<path d=\"M5 22h14\"/><path d=\"M5 2h14\"/><path d=\"M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22\"/><path d=\"M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2\"/>", "lu-id-card": "<path d=\"M16 10h2\"/><path d=\"M16 14h2\"/><path d=\"M6.17 15a3 3 0 0 1 5.66 0\"/><circle cx=\"9\" cy=\"11\" r=\"2\"/><rect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/>", "lu-infinity": "<path d=\"M6 16c5 0 7-8 12-8a4 4 0 0 1 0 8c-5 0-7-8-12-8a4 4 0 1 0 0 8\"/>", "lu-layers": "<path d=\"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z\"/><path d=\"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12\"/><path d=\"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17\"/>", "lu-life-buoy": "<circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m4.93 4.93 4.24 4.24\"/><path d=\"m14.83 9.17 4.24-4.24\"/><path d=\"m14.83 14.83 4.24 4.24\"/><path d=\"m9.17 14.83-4.24 4.24\"/><circle cx=\"12\" cy=\"12\" r=\"4\"/>", "lu-user-search": "<circle cx=\"10\" cy=\"7\" r=\"4\"/><path d=\"M10.3 15H7a4 4 0 0 0-4 4v2\"/><circle cx=\"17\" cy=\"17\" r=\"3\"/><path d=\"m21 21-1.9-1.9\"/>", "lu-badge-check": "<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\"/><path d=\"m9 12 2 2 4-4\"/>", "lu-smartphone": "<rect width=\"14\" height=\"20\" x=\"5\" y=\"2\" rx=\"2\" ry=\"2\"/><path d=\"M12 18h.01\"/>", "lu-mountain": "<path d=\"m8 3 4 8 5-5 5 15H2L8 3z\"/>", "lu-pencil": "<path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/><path d=\"m15 5 4 4\"/>", "lu-scan-qr-code": "<path d=\"M17 12v4a1 1 0 0 1-1 1h-4\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M17 8V7\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M7 17h.01\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/><rect x=\"7\" y=\"7\" width=\"5\" height=\"5\" rx=\"1\"/>", "lu-rocket": "<path d=\"M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z\"/><path d=\"m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z\"/><path d=\"M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0\"/><path d=\"M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5\"/>", "lu-route": "<circle cx=\"6\" cy=\"19\" r=\"3\"/><path d=\"M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15\"/><circle cx=\"18\" cy=\"5\" r=\"3\"/>", "lu-search-x": "<path d=\"m13.5 8.5-5 5\"/><path d=\"m8.5 8.5 5 5\"/><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/>", "lu-scan-search": "<path d=\"M3 7V5a2 2 0 0 1 2-2h2\"/><path d=\"M17 3h2a2 2 0 0 1 2 2v2\"/><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\"/><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"m16 16-1.9-1.9\"/>", "lu-shopping-bag": "<path d=\"M16 10a4 4 0 0 1-8 0\"/><path d=\"M3.103 6.034h17.794\"/><path d=\"M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z\"/>", "lu-stamp": "<path d=\"M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13\"/><path d=\"M20 15.5a2.5 2.5 0 0 0-2.5-2.5h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1z\"/><path d=\"M5 22h14\"/>", "lu-sunrise": "<path d=\"M12 2v8\"/><path d=\"m4.93 10.93 1.41 1.41\"/><path d=\"M2 18h2\"/><path d=\"M20 18h2\"/><path d=\"m19.07 10.93-1.41 1.41\"/><path d=\"M22 22H2\"/><path d=\"m8 6 4-4 4 4\"/><path d=\"M16 18a4 4 0 0 0-8 0\"/>", "lu-trophy": "<path d=\"M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978\"/><path d=\"M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978\"/><path d=\"M18 9h1.5a1 1 0 0 0 0-5H18\"/><path d=\"M4 22h16\"/><path d=\"M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z\"/><path d=\"M6 9H4.5a1 1 0 0 1 0-5H6\"/>", "lu-user-plus": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><line x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/><line x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>", "lu-users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><path d=\"M16 3.128a4 4 0 0 1 0 7.744\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/>"};
+  Object.keys(LUC).forEach(function(k){ICONS[k]=LUC[k];});
+  Object.assign(IN,{"lu-flag": "旗幟", "lu-compass": "羅盤", "lu-rocket": "火箭", "lu-eye": "遠見", "lu-mountain": "山峰", "lu-sunrise": "日出", "lu-user-plus": "新會員", "lu-scan-qr-code": "掃碼", "lu-badge-check": "會員徽章", "lu-repeat": "回訪", "lu-door-open": "回店", "lu-calendar-check": "定期", "lu-shopping-bag": "購物", "lu-coins": "金額", "lu-trending-up": "上升", "lu-goal": "達標", "lu-clock": "時機", "lu-hourglass": "沙漏", "lu-message-circle": "對話", "lu-users": "會員", "lu-handshake": "關係", "lu-heart": "喜愛", "lu-gem": "價值", "lu-infinity": "終身", "lu-trophy": "獎盃", "lu-chart-column-increasing": "成長圖", "lu-clipboard-check": "盤點", "lu-route": "動線", "lu-chart-pie": "占比", "lu-scan-search": "分析", "lu-chart-no-axes-combined": "數據", "lu-headset": "客服", "lu-graduation-cap": "教育訓練", "lu-life-buoy": "支援", "lu-credit-card": "會員卡", "lu-search-x": "找不到", "lu-stamp": "集點章", "lu-user-search": "辨識顧客", "lu-eye-off": "看不見", "lu-id-card": "會員證", "lu-file-text": "紙本", "lu-pencil": "手寫", "lu-smartphone": "手機", "lu-bell-ring": "推播", "lu-layers": "分級", "lu-database": "消費紀錄"});
+  function icSvg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[n]+'</svg>';}
+  /* accent: fills for blocks and bars, darker tone for text and arrows */
+  var FILL={or:'#FC6815',pu:'#B287FD',te:'#24C6B7'},TEXT={or:'#FC6815',pu:'#8B5CF6',te:'#1AA89B'},CN={or:'橘',pu:'紫',te:'青'};
+  var NAME={cover:'封面',coverB:'封面 · 第二款',content:'內文 · 雙欄',stats:'數據 · 指標列',chart:'數據 · 直向長條',team:'三欄 · 六角照片',summary:'三行重點',pain:'痛點列',market:'市場層疊',flow:'流程對照',table:'墨色半版表格',cards:'團隊照片卡',budget:'長條圖＋圖例',closing:'結尾聯絡'};
+  var HCH={"使命": ["lu-flag", "lu-compass", "lu-rocket"], "願景": ["lu-eye", "lu-mountain", "lu-sunrise"], "累積會員": ["lu-user-plus", "lu-scan-qr-code", "lu-badge-check"], "回訪率提升": ["lu-repeat", "lu-door-open", "lu-calendar-check"], "客單價提升": ["lu-shopping-bag", "lu-coins", "lu-trending-up"], "第三季突破 60,000 人": ["lu-goal", "lu-trending-up", "lu-user-plus"], "為什麼是現在": ["lu-clock", "lu-hourglass", "lu-message-circle"]};
+  var LAB={cover:['左側徽章（驅動顧客）','右下徽章（終身價值）'],stats:['右上徽章（一年成效）'],chart:['右上徽章（逐季成長）'],team:['導入顧問','數據分析師','客服夥伴'],pain:['集點卡遺失','認不出常客'],flow:['導入前','Ocard 會員系統','導入後']};
+  var items=[].slice.call(document.querySelectorAll('.item')),ORDER=items.map(function(it){return it.dataset.id;});
+  function pg(n){return (n<10?'0':'')+n;}
+  /* use the page number printed on each slide; the two covers are alternatives for page 01 */
+  var PN={};items.forEach(function(it){var e=it.querySelector('.s-pn span');PN[it.dataset.id]=e?e.textContent:(it.dataset.id==='closing'?'13':'01');});
+  function num(id){return PN[id];}
+  /* give every badge a stable id */
+  items.forEach(function(it){[].forEach.call(it.querySelectorAll('.badge[data-ic]'),function(b,i){b.dataset.icid=it.dataset.id+'-'+i;var c=(CHO[it.dataset.id]||[])[i];b._ch=c||[b.dataset.ic];b.dataset.ic=b._ch[0];});});
+
+  var heads=[];
+  items.forEach(function(it){if(it.dataset.id==='budget')return;   /* budget dots are the chart legend, they stay colour keys */
+    [].forEach.call(it.querySelectorAll('h4.h-sub'),function(h){var d=h.querySelector('i.hx.dot');if(!d)return;var t=h.textContent.trim();if(!HCH[t])return;
+      h.dataset.hid=it.dataset.id+'-'+heads.length;h._ch=HCH[t];h._t=t;h._p=it.dataset.id;heads.push(h);});});
+  var DEF={acc:'or',pn:'on',nb_summary:'none',bn_pain:'icon',nb_flow:'none',ic:{},hm:{}},S;
+  function load(v){S=Object.assign({},DEF,v||{});S.ic=Object.assign({},S.ic||{});S.hm=Object.assign({},S.hm||{});}
+  load(KIT.state.v);
+  /* 存檔 is the shared kit's (templates/_shared/ocard-kit.js): every change is kept as an unsaved draft until then */
+  function save(){KIT.state.v=JSON.parse(JSON.stringify(S));KIT.changed();}
+
+  var accPages=ORDER.filter(function(id){return [].some.call(document.querySelectorAll('.item[data-id="'+id+'"] .slide [style]'),function(el){return el.style.backgroundColor==='rgb(252, 104, 21)'||el.style.color==='rgb(252, 104, 21)';});});
+  function nbPic(k){
+    var t=k==='hex'?'<path d="M48 9l9 5.2v10.4L48 30l-9-5.2V14.2z" fill="#333333"/><text x="48" y="23.5" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="8" font-weight="800" fill="#FFEA00">01</text>':k==='txt'?'<text x="36" y="25" font-family="Montserrat,sans-serif" font-size="12" font-weight="800" fill="#FC6815">01</text>':'';
+    return '<svg viewBox="0 0 96 40">'+t+'<rect x="'+(k==='none'?30:k==='txt'?55:62)+'" y="17" width="'+(k==='none'?36:26)+'" height="5" rx="2.5" fill="#ADADAD"/></svg>';
+  }
+  var NBO=[['none','不加編號'],['hex','六角編號'],['txt','數字編號']];
+  function bnPic(k){return '<svg viewBox="0 0 96 40"><path d="M30 6l11 6.4v13.2L30 32l-11-6.4V12.4z" fill="#333333"/>'+(k==='icon'?'<g transform="translate(24.5 13.5) scale(.46)" fill="none" stroke="#FFEA00" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">'+ICONS.card+'</g>':'<text x="30" y="23" text-anchor="middle" font-family="Montserrat,sans-serif" font-size="10" font-weight="800" fill="#FFEA00">01</text>')+'<rect x="48" y="16" width="30" height="5" rx="2.5" fill="#ADADAD"/></svg>';}
+  function hmPic(k){return '<svg viewBox="0 0 96 40">'+(k==='dot'?'<path d="M30 14l5 2.9v5.8L30 25.5l-5-2.9v-5.8z" fill="#FC6815"/>':'<g transform="translate(22 12) scale(.66)" fill="none" stroke="#FC6815" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">'+ICONS.users+'</g>')+'<rect x="44" y="17" width="32" height="5" rx="2.5" fill="#ADADAD"/></svg>';}
+  function pnPic(k){return '<svg viewBox="0 0 96 40"><rect x="14" y="10" width="40" height="5" rx="2.5" fill="#ADADAD"/>'+(k==='on'?'<text x="84" y="33" text-anchor="end" font-family="Montserrat,sans-serif" font-size="8" font-weight="700" fill="#333333">02 / 13</text>':'')+'</svg>';}
+  var BNO=[['icon','圖示','bn'],['num','編號','bn']];
+  var ROWS=[{k:'acc',t:'輔助色',d:'分類點、重點長條、箭頭和小字的顏色。黃色只用在大色塊和標題點，所以不提供。',pages:accPages,sw:true}];
+  [['summary','三行重點'],['flow','流程對照']].forEach(function(p){ROWS.push({k:'nb_'+p[0],t:'編號',d:'加在每個小標前面。',pages:[p[0]],nb:true,opts:NBO});});
+  ROWS.push({k:'bn_pain',t:'左側六角',d:'左側六角徽章放圖示，或改放編號。',pages:['pain'],nb:true,opts:BNO});
+  items.forEach(function(it){var bs=it.querySelectorAll('.badge[data-ic]');if(bs.length)ROWS.push({k:'ic_'+it.dataset.id,t:'圖示',pages:[it.dataset.id],icons:[].slice.call(bs)});});
+  ORDER.forEach(function(id){var hs=heads.filter(function(h){return h._p===id;});if(hs.length)ROWS.push({k:'hm_'+id,t:'小標記號',pages:[id],heads:hs});});
+  var pnPages=ORDER.filter(function(id){return !!document.querySelector('.item[data-id="'+id+'"] .s-pn');});
+  if(pnPages.length)ROWS.push({k:'pn',t:'顯示頁碼',d:'每頁右下角的頁碼，整份一起顯示或隱藏。',pages:pnPages,pn:true,opts:[['on','顯示','pn'],['off','隱藏','pn']]});
+  var GROUPS=[{t:'輔助色',rows:ROWS.filter(function(r){return r.sw;})},{t:'編號',rows:ROWS.filter(function(r){return r.nb;})},{t:'小標記號',rows:ROWS.filter(function(r){return r.heads;})},{t:'徽章圖示',rows:ROWS.filter(function(r){return r.icons;})},{t:'其他',rows:ROWS.filter(function(r){return r.pn;})}];
+
+  var body=document.getElementById('p-body');
+  GROUPS.forEach(function(g){
+    var gd=document.createElement('div');gd.className='grp';gd.innerHTML='<h3>'+g.t+'</h3>';g.el=gd;
+    g.rows.forEach(function(r){
+      var row=document.createElement('div');row.className='row';r.el=row;
+      var where=r.pages.length>1?'影響 '+r.pages.map(function(id){return (num(id));}).join(' '):(num(r.pages[0]))+' '+NAME[r.pages[0]];
+      var h='<div class="row-h"><b>'+r.t+'</b><i class="scope"></i><span>'+where+'</span></div>';
+      if(r.heads){
+        h+='<div class="opts two" style="margin-bottom:12px"><button class="opt" type="button" data-v="dot">'+hmPic('dot')+'<b>六角點</b></button><button class="opt" type="button" data-v="icon">'+hmPic('icon')+'<b>圖示</b></button></div><div class="icl">';
+        r.heads.forEach(function(hd){
+          h+='<div class="icl-r"><span class="icl-n">'+hd._t+'</span><div class="icl-o" data-hid="'+hd.dataset.hid+'">';
+          hd._ch.forEach(function(n){h+='<button type="button" data-v="'+n+'">'+icSvg(n)+'<span>'+IN[n]+'</span></button>';});
+          h+='</div></div>';});
+        row.innerHTML=h+'</div><p class="hint">每個小標各有 3 個依意思挑選的圖示，第一個是預設；點選圖示會自動切成圖示模式。顏色跟著輔助色。</p>';
+        row.querySelector('.opts').addEventListener('click',function(e){var b=e.target.closest('.opt');if(!b)return;S.hm=Object.assign({},S.hm);S.hm[r.pages[0]]=b.dataset.v;save();apply();});
+        row.querySelectorAll('.icl-o').forEach(function(box){box.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.ic=Object.assign({},S.ic);S.ic[box.dataset.hid]=b.dataset.v;S.hm=Object.assign({},S.hm);S.hm[r.pages[0]]='icon';save();apply();});});
+      }else if(r.icons){
+        h+='<div class="icl">';
+        r.icons.forEach(function(b,i){var ch=b._ch;
+          h+='<div class="icl-r"><span class="icl-n">'+((LAB[r.pages[0]]||[])[i]||'圖示 '+(i+1))+'</span><div class="icl-o" data-icid="'+b.dataset.icid+'">';
+          ch.forEach(function(n){h+='<button type="button" data-v="'+n+'">'+icSvg(n)+'<span>'+IN[n]+'</span></button>';});
+          h+='</div></div>';});
+        row.innerHTML=h+'</div><p class="hint">每個徽章有 3 個依意思挑選的圖示，第一個是預設。</p>';
+        row.querySelectorAll('.icl-o').forEach(function(box){box.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.ic=Object.assign({},S.ic);S.ic[box.dataset.icid]=b.dataset.v;save();apply();});});
+      }else{
+        h+=(r.d?'<p class="hint" style="margin:-4px 0 10px">'+r.d+'</p>':'')+'<div class="opts'+(r.pn?' two':'')+'">';
+        if(r.sw)['or','pu','te'].forEach(function(c){h+='<button class="opt swo" type="button" data-v="'+c+'"><i style="background:'+FILL[c]+'"></i><b>'+CN[c]+'</b></button>';});
+        else r.opts.forEach(function(o){h+='<button class="opt" type="button" data-v="'+o[0]+'">'+(o[2]==='pn'?pnPic(o[0]):o[2]?bnPic(o[0]):nbPic(o[0]))+'<b>'+o[1]+'</b></button>';});
+        row.innerHTML=h+'</div>';
+        row.querySelector('.opts').addEventListener('click',function(e){var b=e.target.closest('.opt');if(!b)return;S[r.k]=b.dataset.v;save();apply();});
+      }
+      gd.appendChild(row);
+    });
+    body.appendChild(gd);
+  });
+
+  /* ---------- photos: every grey hexagon placeholder takes a photo ---------- */
+  var fileIn=document.getElementById('ph-file'),target=null,IM={};
+  /* inside Claude Design the file picker does not open from a click, so photos go in by drag and drop only */
+  var DROPONLY=(function(){try{return !!(window.parent!==window&&window.parent.omelette&&window.parent.omelette.writeFile);}catch(e){return false;}})();
+  var slots=[];
+  items.forEach(function(it){[].forEach.call(it.querySelectorAll('.ph'),function(ph,i){ph.dataset.slot=it.dataset.id+'-'+i;ph._p=it.dataset.id;ph.title=DROPONLY?'把照片拖進來':'拖放照片，或點一下選擇檔案';
+    ph.insertAdjacentHTML('beforeend','<img class="ph-img" alt="" draggable="false">');slots.push(ph);});});
+  var SLOTNAME={cover:['直向六角照片'],coverB:['右上六角照片'],content:['右上照片','左下照片'],team:['導入顧問','數據分析師','客服夥伴'],pain:['右側照片'],table:['左下照片'],cards:['導入顧問','數據分析師'],closing:['蜂巢照片']};
+  function loadImg(k){var v=KIT.state.photos[k];IM[k]=v&&v.src?JSON.parse(JSON.stringify(v)):null;}
+  function saveImg(k){if(IM[k])KIT.state.photos[k]=JSON.parse(JSON.stringify(IM[k]));else delete KIT.state.photos[k];KIT.changed();}
+  function paint(ph){
+    var d=IM[ph.dataset.slot],img=ph.querySelector('.ph-img');ph.classList.toggle('has-img',!!d);
+    if(!d){img.removeAttribute('src');img.style.cssText='';return;}
+    if(img.getAttribute('src')!==d.src)img.src=d.src;
+    var W=ph.offsetWidth,H=ph.offsetHeight;if(!W||!H||!d.w)return;
+    var s=Math.max(W/d.w,H/d.h)*d.z,w=d.w*s,h=d.h*s;
+    var mx=(w-W)/2,my=(h-H)/2;d.x=Math.max(-mx,Math.min(mx,d.x));d.y=Math.max(-my,Math.min(my,d.y));   /* the photo always fills the frame: z=1 is the smallest size that covers it */
+    img.style.cssText='width:'+w+'px;height:'+h+'px;left:'+(W/2-w/2+d.x)+'px;top:'+(H/2-h/2+d.y)+'px';
+  }
+  function paintAll(){slots.forEach(paint);syncRows();}
+  function take(file,k){
+    if(!file||!/^image\//.test(file.type))return;
+    var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
+      var m=1600,sc=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      var src;try{src=c.toDataURL('image/jpeg',.85);}catch(e){src=r.result;}
+      IM[k]={src:src,w:c.width,h:c.height,x:0,y:0,z:1};saveImg(k);paintAll();};im.src=r.result;};r.readAsDataURL(file);
+  }
+  function zoom(k,f){var d=IM[k];if(!d)return;d.z=Math.max(1,Math.min(4,d.z*f));saveImg(k);paintAll();}
+  fileIn.addEventListener('change',function(){if(target&&fileIn.files[0])take(fileIn.files[0],target);fileIn.value='';});
+  slots.forEach(function(ph){
+    var k=ph.dataset.slot;loadImg(k);
+    ph.addEventListener('dragover',function(e){e.preventDefault();ph.classList.add('drop');});
+    ph.addEventListener('dragleave',function(){ph.classList.remove('drop');});
+    ph.addEventListener('drop',function(e){e.preventDefault();ph.classList.remove('drop');take(e.dataTransfer.files[0],k);});
+    var st=null,moved=false;
+    ph.addEventListener('pointerdown',function(e){if(!IM[k])return;var kk=ph.closest('.frame').getBoundingClientRect().width/1280;st={x:e.clientX,y:e.clientY,ox:IM[k].x,oy:IM[k].y,k:kk};moved=false;ph.setPointerCapture(e.pointerId);ph.classList.add('dragging');});
+    ph.addEventListener('pointermove',function(e){if(!st)return;var dx=(e.clientX-st.x)/st.k,dy=(e.clientY-st.y)/st.k;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;IM[k].x=st.ox+dx;IM[k].y=st.oy+dy;paint(ph);});
+    function end(){if(!st)return;st=null;ph.classList.remove('dragging');if(moved){saveImg(k);syncRows();}setTimeout(function(){moved=false;},0);}
+    ph.addEventListener('pointerup',end);ph.addEventListener('pointercancel',end);
+    ph.addEventListener('click',function(){if(DROPONLY||moved||IM[k])return;target=k;fileIn.click();});
+  });
+  var phRows=[];
+  ORDER.forEach(function(id){var ss=slots.filter(function(p){return p._p===id;});if(!ss.length)return;
+    var r={k:'ph_'+id,t:'置入照片',pages:[id],photos:ss};ROWS.push(r);phRows.push(r);});
+  var pg0={t:'照片',rows:phRows};GROUPS.unshift(pg0);
+  var gd=document.createElement('div');gd.className='grp';gd.innerHTML='<h3>照片</h3>';pg0.el=gd;
+  phRows.forEach(function(r){
+    var row=document.createElement('div');row.className='row';r.el=row;
+    var h='<div class="row-h"><b>置入照片</b><i class="scope"></i><span>'+num(r.pages[0])+' '+NAME[r.pages[0]]+'</span></div><div class="ppl">';
+    r.photos.forEach(function(ph,i){var k=ph.dataset.slot;
+      h+='<div class="pp" data-k="'+k+'"><div class="pp-th"><img alt=""><span>尚未放照片</span></div><div class="pp-c"><b>'+((SLOTNAME[r.pages[0]]||[])[i]||'照片 '+(i+1))+'</b><div class="pp-b"><button class="pbtn ink" type="button" data-pa="add">選擇照片</button><button class="pbtn" type="button" data-pa="out" aria-label="縮小">－</button><button class="pbtn" type="button" data-pa="in" aria-label="放大">＋</button><button class="pbtn" type="button" data-pa="remove">移除</button></div></div></div>';});
+    row.innerHTML=h+'</div><p class="hint">'+(DROPONLY?'在 Claude Design 裡請直接把照片拖到簡報的灰色六角形上。':'也可以直接把照片拖到簡報的灰色六角形上。')+'預設是剛好填滿框的最小尺寸；放大後可以拖曳照片調整位置，照片永遠填滿框、不會露出底色。照片只存在這台電腦的瀏覽器裡。</p>';
+    row.querySelectorAll('.pp').forEach(function(pp){var k=pp.dataset.k;
+      var ab=pp.querySelector('[data-pa=add]');if(DROPONLY)ab.hidden=true;else ab.onclick=function(){target=k;fileIn.click();};
+      pp.querySelector('[data-pa=remove]').onclick=function(){IM[k]=null;saveImg(k);paintAll();};
+      pp.querySelector('[data-pa=in]').onclick=function(){zoom(k,1.15);};pp.querySelector('[data-pa=out]').onclick=function(){zoom(k,1/1.15);};});
+    gd.appendChild(row);
+  });
+  body.insertBefore(gd,body.querySelector('.grp'));
+  function syncRows(){phRows.forEach(function(r){r.el.querySelectorAll('.pp').forEach(function(pp){var d=IM[pp.dataset.k],im=pp.querySelector('.pp-th img');pp.classList.toggle('has-ph',!!d);if(d)im.src=d.src;else im.removeAttribute('src');
+    pp.querySelectorAll('[data-pa=in],[data-pa=out],[data-pa=remove]').forEach(function(b){b.disabled=!d;});pp.querySelector('[data-pa=add]').textContent=d?'更換照片':'選擇照片';});});}
+  window.addEventListener('resize',paintAll);
+  setTimeout(paintAll,0);
+
+  /* ---------- apply ---------- */
+  /* inline styles come back as rgb() once the hexagon script has touched them, so compare colours, not text */
+  var OR='rgb(252, 104, 21)',tinted=[];
+  [].forEach.call(document.querySelectorAll('.item .slide [style]'),function(el){
+    var bg=el.style.backgroundColor===OR,c=el.style.color===OR;if(bg||c)tinted.push({el:el,bg:bg,c:c});});
+  function apply(){
+    document.querySelectorAll('.s-pn').forEach(function(el){el.style.visibility=S.pn==='off'?'hidden':'';});
+    tinted.forEach(function(t){if(t.bg)t.el.style.backgroundColor=FILL[S.acc];if(t.c)t.el.style.color=TEXT[S.acc];});
+    document.querySelectorAll('.badge[data-icid]').forEach(function(b){
+      var n=S.ic[b.dataset.icid]||b.dataset.ic,it=b.closest('.item').dataset.id,i=+b.dataset.icid.split('-')[1];
+      b.innerHTML=(it==='pain'&&S.bn_pain==='num')?'<span class="bnum">'+pg(i+1)+'</span>':icSvg(n);
+    });
+    heads.forEach(function(hd){
+      var on=S.hm[hd._p]==='icon',dot=hd.querySelector('i.hx.dot'),ic=hd.querySelector('.hic');
+      dot.style.display=on?'none':'';
+      if(!on){if(ic)ic.remove();return;}
+      if(!ic){ic=document.createElement('i');ic.className='hic';hd.insertBefore(ic,dot);}
+      ic.innerHTML=icSvg(S.ic[hd.dataset.hid]||hd._ch[0]);ic.style.color=TEXT[S.acc];
+    });
+    var pr=ROWS.filter(function(r){return r.k==='ic_pain';})[0];if(pr)pr.el.classList.toggle('dim',S.bn_pain==='num');
+    ['summary','flow'].forEach(function(p){
+      var k=S['nb_'+p];
+      [].forEach.call(document.querySelectorAll('[data-nb="'+p+'"]'),function(h,i){
+        var old=h.querySelector('.nbx');if(old)old.remove();
+        if(k==='none')return;
+        var e=document.createElement('i');e.className='nbx '+(k==='hex'?'hx hexn':'txtn');e.textContent=pg(i+1);
+        if(k==='hex'){e.dataset.o='v';e.style.position='relative';}else e.style.color=TEXT[S.acc];
+        h.insertBefore(e,h.firstChild);
+      });
+    });
+    if(window.hexShape)window.hexShape();
+    ROWS.forEach(function(r){
+      if(r.heads){var m=S.hm[r.pages[0]]||'dot';r.el.querySelectorAll('.opt').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===m?'true':'false');});
+        r.el.querySelectorAll('.icl-o').forEach(function(box){var hd=document.querySelector('h4[data-hid="'+box.dataset.hid+'"]'),cur=m==='icon'?(S.ic[box.dataset.hid]||hd._ch[0]):'';box.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===cur?'true':'false');});});}
+      else if(r.icons)r.el.querySelectorAll('.icl-o').forEach(function(box){var b0=document.querySelector('.badge[data-icid="'+box.dataset.icid+'"]'),cur=S.ic[box.dataset.icid]||b0.dataset.ic;box.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===cur?'true':'false');});});
+      else r.el.querySelectorAll('.opt').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.v===S[r.k]?'true':'false');});
+    });
+  }
+  document.getElementById('p-reset').onclick=function(){
+    if(curPage){ROWS.forEach(function(r){if(r.pages.indexOf(curPage)<0)return;if(r.photos)return;if(r.heads){delete S.hm[curPage];r.heads.forEach(function(h){delete S.ic[h.dataset.hid];});}else if(r.icons)r.icons.forEach(function(b){delete S.ic[b.dataset.icid];});else S[r.k]=DEF[r.k];});}
+    else S=Object.assign({},DEF,{ic:{},hm:{}});
+    save();apply();
+  };
+
+  /* ---------- panel: only the page in view ---------- */
+  var panel=document.getElementById('panel'),adj=document.getElementById('btn-adjust'),scopeEl=document.getElementById('p-scope'),list=document.getElementById('slides'),curPage=0,showAll=false;
+  /* one page's settings in the order their parts sit on the slide (shared kit), related rows together */
+  tinted.forEach(function(t){t.el.setAttribute('data-acc','');});
+  function clusterOf(r){
+    var k=r.k;
+    if(k==='acc')return ['輔助色','[data-acc]',1];
+    if(k==='pn')return ['頁碼','.s-pn',1];
+    if(/^nb_/.test(k))return ['編號','[data-nb]',1];
+    if(k==='bn_pain')return ['徽章','.badge',1];
+    if(/^ic_/.test(k))return ['徽章','.badge',2];
+    if(/^hm_/.test(k))return ['小標記號','h4[data-hid]',1];
+    if(/^ph_/.test(k))return ['照片','.ph',1];
+    return ['其他',null,1];
+  }
+  var pageBox=document.createElement('div');pageBox.id='p-page';
+  function filter(n){
+    curPage=n||0;
+    GROUPS.forEach(function(g){g.rows.forEach(function(r){g.el.appendChild(r.el);});});
+    document.getElementById('p-title').textContent=n?'調整第 '+(num(n))+' 頁 · '+NAME[n]:'調整示意頁';
+    var any=false;
+    GROUPS.forEach(function(g){var ga=false;
+      g.rows.forEach(function(r){var show=!n||r.pages.indexOf(n)>=0;r.el.hidden=!show;if(show){ga=true;any=true;}
+        var sc=r.el.querySelector('.scope');sc.hidden=!n;var multi=r.pages.length>1;sc.textContent=multi?'整份套用':'只改這頁';sc.classList.toggle('one',!multi);});
+      g.el.hidden=!!n||!ga;});
+    if(n){var it=items.filter(function(x){return x.dataset.id===n;})[0],its=[];
+      GROUPS.forEach(function(g){g.rows.forEach(function(r){if(!r.el.hidden){var c=clusterOf(r);its.push({el:r.el,group:c[0],sel:c[1],rank:c[2]});}});});
+      if(!pageBox.parentNode)body.insertBefore(pageBox,GROUPS[0].el);pageBox.hidden=false;
+      KIT.orderPanel(pageBox,it.querySelector('.slide'),its);}
+    else pageBox.hidden=true;
+    scopeEl.innerHTML=n?(any?'目前只顯示第 '+(num(n))+' 頁能改的項目，往下捲動會自動換成下一頁。標「整份套用」的選項會一起改到其他頁。':'這一頁沒有可以調整的圖示、編號或輔助色。')+' <button type="button" id="p-all">顯示全部選項</button>':'';
+    var all=document.getElementById('p-all');if(all)all.onclick=function(){showAll=true;filter(0);mark(0);};
+  }
+  function mark(n){list.classList.toggle('has-editing',!!n);items.forEach(function(it){it.classList.toggle('editing',it.dataset.id===n);});}
+  function pageInView(){var best=ORDER[0],bd=1e9,mid=window.innerHeight/2;items.forEach(function(it){var r=it.querySelector('.frame').getBoundingClientRect(),d=Math.abs(r.top+r.height/2-mid);if(d<bd){bd=d;best=it.dataset.id;}});return best;}
+  /* Claude Design: the panel opens only in Edit mode (same as the white-ground template); elsewhere always on */
+  var tipEl=document.getElementById('adj-tip'),pendingN=null;
+  function hostWin(){try{return window.parent&&window.parent!==window&&window.parent.document?window.parent:null;}catch(e){return null;}}
+  function inHost(){var p=hostWin();return !!((window.omelette&&window.omelette.writeFile)||(p&&p.omelette&&p.omelette.writeFile));}
+  function editOn(){return KIT.mode!=='view'&&(KIT.mode!=='design'||document.body.hasAttribute('data-dc-editor-on'));}
+  function askEdit(n){pendingN=n;KIT.canAdjust();}
+  document.getElementById('adj-tip-x').onclick=function(){pendingN=null;tipEl.hidden=true;};
+  setInterval(function(){if(editOn()){if(!tipEl.hidden)tipEl.hidden=true;if(pendingN){var n=pendingN;pendingN=null;openPanel(n);}}else if(document.body.classList.contains('open-panel'))closePanel();},800);
+  var pin=0;
+  function openPanel(n){if(!editOn()){askEdit(n);return;}showAll=false;filter(n);mark(n);body.scrollTop=0;document.body.classList.add('open-panel');adj.setAttribute('aria-expanded','true');
+    /* opening the panel narrows the slides; keep the chosen page in view and don't let the reflow switch pages */
+    pin=Date.now();var it=items.filter(function(x){return x.dataset.id===n;})[0];if(it)setTimeout(function(){it.scrollIntoView({block:'center'});pin=Date.now();},320);}
+  function closePanel(){document.body.classList.remove('open-panel');adj.setAttribute('aria-expanded','false');mark(0);}
+  adj.onclick=function(){document.body.classList.contains('open-panel')?closePanel():openPanel(pageInView());};
+  document.getElementById('p-close').onclick=closePanel;document.getElementById('scrim').onclick=closePanel;
+  var tick=false;
+  window.addEventListener('scroll',function(){if(tick||showAll||!document.body.classList.contains('open-panel')||Date.now()-pin<700)return;tick=true;
+    requestAnimationFrame(function(){tick=false;var n=pageInView();if(n!==curPage){filter(n);mark(n);}});},{passive:true});
+  var ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>';
+  items.forEach(function(it){
+    var n=it.dataset.id,cnt=ROWS.filter(function(r){return r.pages.indexOf(n)>=0;}).length,cap=it.querySelector('.sl-cap');
+    cap.insertAdjacentHTML('afterbegin','<span class="now">正在調整</span><b>'+(num(n))+'</b>');
+    if(!cnt)return;
+    var w=document.createElement('span');w.className='cap-tw';w.innerHTML='<em>'+cnt+' 項可調整</em>';
+    var b=document.createElement('button');b.type='button';b.className='tw-chip';b.innerHTML=ICON+'調整這一頁';b.onclick=function(){openPanel(n);};
+    w.appendChild(b);cap.appendChild(w);
+  });
+  KIT.init({
+    mount:document.getElementById('okit-mount'),
+    sections:function(){return items.map(function(it){var sl=it.querySelector('.slide');sl.setAttribute('data-id',it.dataset.id);return sl;});},
+    photos:function(){return Promise.resolve(JSON.parse(JSON.stringify(KIT.state.photos||{})));},
+    photosInDesign:true,
+    onState:function(st){load(st.v);slots.forEach(function(ph){loadImg(ph.dataset.slot);});paintAll();apply();},
+    onMode:function(m){if(m==='view'&&document.body.classList.contains('open-panel'))closePanel();}
+  });
+  apply();
+})();
+
+</script>
