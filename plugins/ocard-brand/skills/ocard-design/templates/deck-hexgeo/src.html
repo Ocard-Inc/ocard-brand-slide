@@ -92,8 +92,10 @@ td.sp{white-space:nowrap;overflow:hidden;max-width:420px}
 @media (max-width:640px){h1{font-size:28px}}
 /* ---------- adjust panel (same behaviour as the white-ground template) ---------- */
 :root{--chrome-surface:#FFFFFF;--chrome-sunken:#FAFAFA;--chrome-text:#333333;--chrome-text-2:#5C5C5C;--chrome-muted:#8A8A8A;--chrome-line:#E8E8E8;--chrome-line-strong:#D6D6D6;--chrome-focus:#FFF8C8}
-.adj-btn{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:29;font:inherit;font-size:15px;font-weight:700;height:44px;padding:0 18px;border-radius:999px;border:0;background:var(--ink);color:#FFFFFF;display:inline-flex;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(51,51,51,.18)}
-.adj-btn svg{width:18px;height:18px}
+/* 「調整」button: same as the white template's toolbar button (2026-10-06) */
+.adj-btn{font:inherit;font-size:15px;font-weight:700;height:40px;padding:0 18px;border-radius:999px;border:0;background:transparent;color:var(--chrome-text);box-shadow:inset 0 0 0 1px var(--chrome-line-strong);display:inline-flex;align-items:center;gap:8px;cursor:pointer;flex:0 0 auto}
+.adj-btn:hover{background:var(--chrome-sunken)}
+.adj-btn svg{width:18px;height:18px;flex:0 0 auto}
 .adj-btn:focus-visible,.opt:focus-visible,.tw-chip:focus-visible,.icl-o button:focus-visible{outline:1px solid var(--chrome-text);box-shadow:0 0 0 3px var(--chrome-focus)}
 .cap-tw{margin-left:auto;display:flex;align-items:center;gap:10px}
 .cap-tw em{font-style:normal;font-size:13px;color:var(--chrome-muted)}
@@ -107,7 +109,6 @@ td.sp{white-space:nowrap;overflow:hidden;max-width:420px}
 .panel{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);z-index:31;background:var(--chrome-surface);border-left:1px solid var(--chrome-line);display:flex;flex-direction:column;transform:translateX(100%);transition:transform 280ms cubic-bezier(.2,0,0,1);padding-top:env(safe-area-inset-top,0px)}
 .open-panel .panel{transform:none}
 .open-panel .scrim{opacity:1;pointer-events:auto}
-.open-panel .adj-btn{display:none}
 .adj-tip{position:fixed;top:calc(68px + env(safe-area-inset-top,0px));right:16px;z-index:29;width:300px;padding:14px 40px 14px 16px;border-radius:12px;background:#FFFFFF;color:#333333;font-size:13px;line-height:1.6;box-shadow:0 0 0 1px #E8E8E8,0 8px 24px rgba(51,51,51,.16)}.adj-tip[hidden]{display:none}.adj-tip b{display:block;font-size:14px;font-weight:700;margin-bottom:4px}.adj-tip button{position:absolute;top:8px;right:8px;width:28px;height:28px;border:0;border-radius:6px;background:transparent;color:#333333;font:inherit;font-size:18px;line-height:1;cursor:pointer}.open-panel .adj-tip{display:none}@media print{.adj-tip{display:none!important}}
 @media (min-width:760px){.panel{width:min(380px,44vw)}.open-panel .scrim{opacity:0;pointer-events:none}.open-panel .wrap{margin-right:min(380px,44vw);margin-left:0;max-width:none;padding-inline:20px}}
 @media (max-width:759.98px){.panel{top:auto;left:0;width:100%;height:56vh;border-left:0;border-top:1px solid var(--chrome-line);border-radius:16px 16px 0 0;transform:translateY(100%)}.open-panel .panel{transform:none}.open-panel .scrim{opacity:0;pointer-events:none}.open-panel .wrap{padding-bottom:58vh}}
@@ -115,10 +116,9 @@ td.sp{white-space:nowrap;overflow:hidden;max-width:420px}
 body:not(.can-edit) .adj-btn,body:not(.can-edit) .cap-tw,body:not(.can-edit) .panel,body:not(.can-edit) .scrim,body:not(.can-edit) .adj-tip,body:not(.can-edit) .lead{display:none!important}
 body:not(.can-edit) .ph{pointer-events:none;cursor:default}
 .adj-tip{display:none!important}
-.okit-fix{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:28;padding:4px;border-radius:999px;background:var(--chrome-surface);box-shadow:0 4px 16px rgba(51,51,51,.14)}
-body.can-edit .okit-fix{right:136px}
+.okit-fix{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));right:16px;z-index:28;padding:6px;display:flex;align-items:center;gap:8px;border-radius:999px;background:var(--chrome-surface);box-shadow:0 4px 16px rgba(51,51,51,.14)}
 .open-panel .okit-fix{display:none}
-@media (max-width:640px){body.can-edit .okit-fix{top:calc(68px + env(safe-area-inset-top,0px));right:16px}}
+@media (max-width:640px){.adj-btn span{display:none}.adj-btn{padding:0 11px}}
 .p-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--chrome-line)}
 .p-head h2{margin:0;font-size:17px;font-weight:700;flex:1}
 .x{font:inherit;width:36px;height:36px;border-radius:8px;border:0;background:transparent;color:var(--chrome-text);cursor:pointer;font-size:22px;line-height:1}
@@ -430,7 +430,6 @@ body.can-edit .okit-fix{right:136px}
 </section>
 </div>
 
-<button class="adj-btn" id="btn-adjust" type="button" aria-controls="panel" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>調整</button>
 <div class="adj-tip" id="adj-tip" hidden><b>請先進入編輯模式</b>按 Claude Design 上方工具列的「Edit」，調整面板就會自動打開。沒有進入編輯，調整不會存檔。<button type="button" id="adj-tip-x" aria-label="關閉">×</button></div>
 <div class="scrim" id="scrim"></div>
 <input type="file" id="ph-file" accept="image/*" hidden>
@@ -443,7 +442,7 @@ body.can-edit .okit-fix{right:136px}
   <div class="p-foot"><small>捲到要改的那一頁再按「調整」，面板只會列出那一頁的選項。</small><button id="p-reset" type="button">恢復預設</button></div>
 </aside>
 <template id="ic-chart">__IC_CHART__</template>
-<div class="okit-fix" id="okit-mount" data-noprint></div>
+<div class="okit-fix" data-noprint><button class="adj-btn" id="btn-adjust" type="button" aria-controls="panel" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg><span>調整</span></button><span id="okit-mount"></span></div>
 <!--OCARD-KIT-HEAD-->
 <script data-ocard-after>
 (function(){
@@ -811,14 +810,9 @@ body.can-edit .okit-fix{right:136px}
   var tick=false;
   window.addEventListener('scroll',function(){if(tick||showAll||!document.body.classList.contains('open-panel')||Date.now()-pin<700)return;tick=true;
     requestAnimationFrame(function(){tick=false;var n=pageInView();if(n!==curPage){filter(n);mark(n);}});},{passive:true});
-  var ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg>';
   items.forEach(function(it){
-    var n=it.dataset.id,cnt=ROWS.filter(function(r){return r.pages.indexOf(n)>=0;}).length,cap=it.querySelector('.sl-cap');
+    var n=it.dataset.id,cap=it.querySelector('.sl-cap');
     cap.insertAdjacentHTML('afterbegin','<span class="now">正在調整</span><b>'+(num(n))+'</b>');
-    if(!cnt)return;
-    var w=document.createElement('span');w.className='cap-tw';w.innerHTML='<em>'+cnt+' 項可調整</em>';
-    var b=document.createElement('button');b.type='button';b.className='tw-chip';b.innerHTML=ICON+'調整這一頁';b.onclick=function(){openPanel(n);};
-    w.appendChild(b);cap.appendChild(w);
   });
   KIT.init({
     mount:document.getElementById('okit-mount'),

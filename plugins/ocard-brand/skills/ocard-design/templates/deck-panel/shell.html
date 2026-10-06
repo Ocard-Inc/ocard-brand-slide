@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" data-ground="__GROUND__">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap">
+<style>
+/* ---------- viewer chrome tokens (Ocard neutral ramp) ---------- */
+:root{
+  --chrome-bg:#F2F2F2; --chrome-surface:#FFFFFF; --chrome-sunken:#FAFAFA;
+  --chrome-text:#333333; --chrome-text-2:#5C5C5C; --chrome-muted:#8A8A8A;
+  --chrome-line:#E8E8E8; --chrome-line-strong:#D6D6D6;
+  --chrome-ink-btn:#333333; --chrome-ink-btn-text:#FFFFFF;
+  --chrome-focus:#FFF8C8;
+  --font:"Montserrat","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --chrome-bg:#1A1A1A; --chrome-surface:#262626; --chrome-sunken:#2E2E2E;
+    --chrome-text:#F2F2F2; --chrome-text-2:#D6D6D6; --chrome-muted:#ADADAD;
+    --chrome-line:#3D3D3D; --chrome-line-strong:#4A4A4A;
+    --chrome-ink-btn:#F2F2F2; --chrome-ink-btn-text:#1A1A1A;
+    --chrome-focus:#5C5C5C;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --chrome-bg:#1A1A1A; --chrome-surface:#262626; --chrome-sunken:#2E2E2E;
+  --chrome-text:#F2F2F2; --chrome-text-2:#D6D6D6; --chrome-muted:#ADADAD;
+  --chrome-line:#3D3D3D; --chrome-line-strong:#4A4A4A;
+  --chrome-ink-btn:#F2F2F2; --chrome-ink-btn-text:#1A1A1A;
+  --chrome-focus:#5C5C5C;
+}
+*{box-sizing:border-box}
+body{background:var(--chrome-bg);color:var(--chrome-text);font-family:var(--font);font-size:15px;line-height:1.6;margin:0}
+
+/* ---------- toolbar ---------- */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--chrome-surface);border-bottom:1px solid var(--chrome-line)}
+.bar-in{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar h1{margin:0;font-size:17px;font-weight:700;line-height:1.3;flex:1 1 240px;text-wrap:balance}
+.bar h1 small{display:block;font-size:13px;font-weight:400;color:var(--chrome-muted)}
+.btn{font:inherit;font-size:15px;font-weight:700;height:40px;padding:0 18px;border-radius:999px;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background-color 120ms cubic-bezier(.2,0,0,1),transform 120ms cubic-bezier(.2,0,0,1)}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.opt:focus-visible,.chip:focus-visible,.sw:focus-visible,.icl-o button:focus-visible{outline:1px solid var(--chrome-text);box-shadow:0 0 0 3px var(--chrome-focus)}
+.btn-ink{background:var(--chrome-ink-btn);color:var(--chrome-ink-btn-text)}
+.btn-ghost{background:transparent;color:var(--chrome-text);box-shadow:inset 0 0 0 1px var(--chrome-line-strong)}
+.btn-ghost:hover{background:var(--chrome-sunken)}
+.btn svg{width:18px;height:18px;flex:0 0 auto}
+
+/* ---------- slide list ---------- */
+.list{max-width:1180px;margin:0 auto;padding-block:24px 64px;padding-inline:16px;display:flex;flex-direction:column;gap:32px}
+.item{display:flex;flex-direction:column;gap:10px;transition:opacity 180ms cubic-bezier(.2,0,0,1)}
+.cap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--chrome-text-2)}
+.cap b{font-weight:700;color:var(--chrome-text);font-variant-numeric:tabular-nums}
+.cap-tw{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cap-tw em{font-style:normal;font-size:13px;color:var(--chrome-muted)}
+.chip{font:inherit;font-size:13px;line-height:1;padding:7px 12px;border-radius:999px;border:0;background:var(--chrome-surface);color:var(--chrome-text-2);box-shadow:inset 0 0 0 1px var(--chrome-line-strong);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{background:var(--chrome-sunken);color:var(--chrome-text)}
+.chip svg{width:14px;height:14px}
+.open-panel .list.has-editing .item:not(.editing){opacity:.35}
+.cap .now{display:none;font-size:12px;font-weight:700;line-height:1;padding:5px 9px;border-radius:999px;background:var(--chrome-ink-btn);color:var(--chrome-ink-btn-text)}
+.open-panel .item.editing .cap .now{display:inline-block}
+.frame{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;overflow:hidden;border-radius:8px;box-shadow:0 1px 3px rgba(26,26,26,.10),0 0 0 1px var(--chrome-line);background:#FFFFFF}
+[data-ground="ink"] .frame{background:#333333}
+
+/* ---------- the slide canvas: fixed 1280 x 720, scaled into its frame ---------- */
+.slide{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0;transform:scale(var(--k,1));overflow:hidden;-webkit-font-smoothing:antialiased}
+.slide>section{margin:0}
+/* Lucide icons are inlined as SVG; they size like the icon font did (1em) */
+/* only the glyph is 1em: the <i> keeps the box its own style gives it (e.g. a full-width centred table cell) */
+.slide i[class*="icon-"]{display:inline-flex;align-items:center;justify-content:center;font-style:normal;line-height:1}
+.slide i[class*="icon-"]>svg{width:1em;height:1em;display:block}
+.slide image-slot{cursor:pointer}
+
+/* ---------- adjust panel ---------- */
+.scrim{position:fixed;inset:0;background:rgba(26,26,26,.35);z-index:30;opacity:0;pointer-events:none;transition:opacity 180ms cubic-bezier(.2,0,0,1)}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);z-index:31;background:var(--chrome-surface);border-left:1px solid var(--chrome-line);display:flex;flex-direction:column;transform:translateX(100%);transition:transform 280ms cubic-bezier(.2,0,0,1);padding-top:env(safe-area-inset-top,0px)}
+.open-panel .panel{transform:none}
+.open-panel .scrim{opacity:1;pointer-events:auto}
+/* wide: the slides move left and stay fully visible; narrow: the panel is a bottom sheet under the slide being adjusted */
+@media (min-width:760px){.panel{width:min(380px,44vw)}.open-panel .scrim{opacity:0;pointer-events:none}.open-panel .list{margin-right:min(380px,44vw);margin-left:0;max-width:none;padding-inline:20px}.open-panel .bar-in{max-width:none;margin-right:min(380px,44vw)}}
+@media (max-width:759.98px){.panel{top:auto;left:0;width:100%;height:56vh;border-left:0;border-top:1px solid var(--chrome-line);border-radius:16px 16px 0 0;transform:translateY(100%)}.open-panel .panel{transform:none}.open-panel .scrim{opacity:0;pointer-events:none}.open-panel .list{padding-bottom:58vh}}
+.p-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--chrome-line)}
+.p-head h2{margin:0;font-size:17px;font-weight:700;flex:1}
+.x{font:inherit;width:36px;height:36px;border-radius:8px;border:0;background:transparent;color:var(--chrome-text);cursor:pointer;font-size:22px;line-height:1}
+.x:hover{background:var(--chrome-sunken)}
+.p-body{flex:1;overflow-y:auto;padding:8px 20px 32px}
+.p-note{font-size:13px;line-height:1.6;color:var(--chrome-text-2);margin:12px 0 4px}
+.p-scope{display:none;margin:14px 0 0;padding:12px 14px;border-radius:8px;background:var(--chrome-sunken);font-size:13px;line-height:1.6;color:var(--chrome-text-2)}
+.panel.filtered .p-scope{display:block}
+.p-scope button{font:inherit;font-weight:700;color:var(--chrome-text);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.grp{margin-top:20px}
+.grp>h3{margin:0 0 4px;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--chrome-muted)}
+.row{padding:16px 0;border-top:1px solid var(--chrome-line);scroll-margin-top:8px;border-radius:8px;transition:background-color 280ms}
+.row.flash{background:var(--chrome-focus)}
+.row[hidden],.grp[hidden]{display:none!important}
+.row.dim .opts,.row.dim .icl,.row.dim .pp,.row.dim .nl{opacity:.45}
+.row.dim .row-h b::after{content:"目前沒有作用";display:block;margin-top:2px;font-size:11px;font-weight:700;color:var(--chrome-muted);white-space:nowrap}
+.seg{margin-left:auto;display:inline-flex;padding:2px;border-radius:999px;background:var(--chrome-sunken);box-shadow:inset 0 0 0 1px var(--chrome-line)}
+.seg button{font:inherit;font-size:11px;font-weight:700;line-height:1;padding:5px 9px;border:0;border-radius:999px;background:transparent;color:var(--chrome-text-2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--chrome-ink-btn);color:var(--chrome-ink-btn-text)}
+.row-h{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.row-h b{font-size:15px;font-weight:700}
+.row-h span{font-size:12px;color:var(--chrome-muted);margin-left:auto;font-variant-numeric:tabular-nums}
+.scope{font-style:normal;font-size:11px;font-weight:700;line-height:1;padding:4px 7px;border-radius:999px;background:var(--chrome-sunken);color:var(--chrome-text-2);box-shadow:inset 0 0 0 1px var(--chrome-line);white-space:nowrap}
+.scope.one{background:#FFF8C8;color:#333333;box-shadow:none}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.opts.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.opts.four,.opts.sws{grid-template-columns:repeat(4,minmax(0,1fr))}
+.opts.pills{grid-template-columns:repeat(4,minmax(0,1fr))}
+.opt{font:inherit;text-align:left;border:0;border-radius:8px;padding:8px;background:var(--chrome-sunken);color:var(--chrome-text);cursor:pointer;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 0 0 1px var(--chrome-line);min-width:0}
+.opt:hover{box-shadow:inset 0 0 0 1px var(--chrome-line-strong)}
+.opt[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--chrome-text);background:var(--chrome-surface)}
+.opt svg{width:100%;height:auto;display:block;border-radius:4px;background:#FFFFFF}
+.opt b{font-size:13px;font-weight:700;line-height:1.3}
+.opt em{font-style:normal;font-size:12px;line-height:1.45;color:var(--chrome-text-2)}
+.opt.swo{align-items:center;text-align:center;padding:10px 6px}
+.opt.swo i{width:24px;height:24px;border-radius:999px;display:block;box-shadow:inset 0 0 0 1px rgba(51,51,51,.12)}
+.opt.pl{align-items:center;text-align:center;padding:8px 4px;gap:6px}
+.opt.pl .pv{display:flex;align-items:center;justify-content:center;width:100%;height:34px;border-radius:6px;background:#FFFFFF}
+[data-ground="ink"] .opt.pl .pv{background:#333333}
+.opt.pl .pv span{font-size:12px;font-weight:700;line-height:1.2;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.opt.pl b{font-size:11px;font-weight:700}
+.sw-row{display:flex;align-items:center;gap:12px}
+.sw-row div{flex:1}
+.sw-row b{display:block;font-size:15px}
+.sw-row em{font-style:normal;font-size:12px;color:var(--chrome-text-2);line-height:1.5}
+.sw{flex:0 0 auto;width:44px;height:26px;border-radius:999px;border:0;background:var(--chrome-line-strong);position:relative;cursor:pointer}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:#FFFFFF;box-shadow:0 1px 2px rgba(26,26,26,.2);transition:transform 120ms cubic-bezier(.2,0,0,1)}
+.sw[aria-checked="true"]{background:#FFEA00}
+.sw[aria-checked="true"]::after{transform:translateX(18px)}
+.hint{font-size:12px;color:var(--chrome-muted);margin:8px 0 0;line-height:1.5}
+.icl{display:flex;flex-direction:column;gap:12px}
+.icl-r{display:flex;flex-direction:column;gap:6px}
+.icl-n{font-size:13px;font-weight:700;line-height:1.4}
+.icl-o{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.icl-o button{font:inherit;font-size:12px;gap:6px;padding:8px 6px;border:0;border-radius:8px;background:var(--chrome-sunken);color:var(--chrome-text);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px var(--chrome-line)}
+.icl-o button:hover{box-shadow:inset 0 0 0 1px var(--chrome-line-strong)}
+.icl-o button[aria-pressed="true"]{background:var(--chrome-surface);box-shadow:inset 0 0 0 2px var(--chrome-text)}
+.icl-o svg{width:20px;height:20px;flex:0 0 auto}
+.nl{display:flex;flex-direction:column;gap:10px}
+.nl-r{display:flex;align-items:center;gap:10px}
+.nl-n{flex:0 0 92px;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.3;overflow-wrap:anywhere}
+.nl-o{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.nl-o .opt.swo{padding:7px 4px;gap:4px}
+.nl-o .opt.swo i{width:18px;height:18px}
+.warn{display:none;margin:10px 0 0;padding:10px 12px 10px 34px;border-radius:8px;background:var(--chrome-sunken);box-shadow:inset 0 0 0 1px var(--chrome-line-strong);font-size:12px;line-height:1.55;color:var(--chrome-text);position:relative}
+.warn::before{content:"!";position:absolute;left:10px;top:10px;width:16px;height:16px;border-radius:999px;background:var(--chrome-text);color:var(--chrome-surface);font-size:11px;font-weight:800;line-height:16px;text-align:center}
+.row.conflict .warn{display:block}
+.pp{display:flex;flex-direction:column;gap:12px}
+.pp-r{display:flex;flex-direction:column;gap:8px}
+.pp-n{font-size:13px;font-weight:700;line-height:1.4;display:flex;gap:8px;align-items:baseline}
+.pp-n em{font-style:normal;font-weight:400;font-size:12px;color:var(--chrome-muted)}
+.pp-b{display:flex;gap:8px;flex-wrap:wrap}
+.pp-b [hidden]{display:none}
+.pp-b .btn{height:34px;font-size:13px;padding:0 12px}
+.p-foot{padding:14px 20px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--chrome-line);display:flex;gap:8px;align-items:center}
+.p-foot small{flex:1;font-size:12px;color:var(--chrome-muted);line-height:1.5}
+
+/* ---------- edit vs. finished deck: the adjust UI exists only where it can be saved ---------- */
+body:not(.can-edit) #btn-adjust,body:not(.can-edit) .cap-tw,body:not(.can-edit) .panel,body:not(.can-edit) .scrim,body:not(.can-edit) .edit-hint{display:none!important}
+
+/* ---------- presenting ---------- */
+.presenting{overflow:hidden}
+.presenting .bar,.presenting .cap{display:none}
+.presenting .list{position:fixed;inset:0;max-width:none;padding:0;margin:0!important;background:#1A1A1A;display:flex;align-items:center;justify-content:center;z-index:40}
+.presenting .item{display:none}
+.presenting .item.cur{display:block;width:min(100vw,calc(100vh*16/9))}
+.presenting .frame{border-radius:0;box-shadow:none}
+.presenting image-slot{pointer-events:none}
+.pres-ui{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:41;display:none;gap:8px}
+.presenting .pres-ui{display:flex}
+.pres-ui .btn{background:rgba(255,255,255,.12);color:#FFFFFF}
+.pres-ui .btn:hover{background:rgba(255,255,255,.22)}
+@media (max-width:640px){.cap-tw{margin-left:0}.bar-in .btn span{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- print / Save as PDF: one slide per page ---------- */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{background:none}
+  .bar,.cap,.panel,.scrim,.pres-ui,[data-ocard-toast]{display:none!important}
+  .list{display:block;max-width:none;padding:0;margin:0!important}
+  .item{display:block!important;opacity:1!important;break-after:page;page-break-after:always}
+  .frame{width:1280px;height:720px;aspect-ratio:auto;border-radius:0;box-shadow:none}
+  .slide{transform:none!important}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <h1>__TITLE__<small><span id="pg-total"></span> 頁 · __GROUND_NAME__<span class="edit-hint"> · 捲到要改的那一頁，按「調整」</span></small></h1>
+    <button class="btn btn-ghost" id="btn-adjust" type="button" aria-controls="panel" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5H3"/><path d="M12 19H3"/><path d="M14 3v4"/><path d="M16 17v4"/><path d="M21 12h-9"/><path d="M21 19h-5"/><path d="M21 5h-7"/><path d="M8 10v4"/><path d="M8 12H3"/></svg><span>調整</span></button>
+    <span id="okit-mount"></span>
+    <button class="btn btn-ghost" id="btn-play" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></svg><span>播放</span></button>
+  </div>
+</header>
+
+<main class="list" id="deck">
+__SLIDES__
+</main>
+
+<div class="pres-ui">
+  <button class="btn" type="button" id="p-prev" aria-label="上一頁">‹</button>
+  <button class="btn" type="button" id="p-next" aria-label="下一頁">›</button>
+  <button class="btn" type="button" id="p-exit">結束播放</button>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" aria-label="調整">
+  <div class="p-head"><h2 id="p-title">調整簡報</h2><button class="x" id="p-close" type="button" aria-label="關閉">×</button></div>
+  <div class="p-body" id="p-body">
+    <p class="p-note">這裡的選項都在 Ocard 品牌規範內，怎麼選都不會跑出規範。調整會即時套用，並記在這台電腦的瀏覽器裡，不會改到別人看到的版本。</p>
+    <div class="p-scope" id="p-scope"></div>
+  </div>
+  <div class="p-foot"><small>調整完記得按「存檔」。</small><button class="btn btn-ghost" id="p-reset" type="button">恢復預設</button><button class="btn btn-ink okit-edit" id="p-save" type="button">存檔</button></div>
+</aside>
+
+
+<script type="application/json" id="ocard-icons">__ICONS__</script>
+<script type="application/json" id="ocard-thumbs">__THUMBS__</script>
+<!-- 存檔內容：調整設定與照片。按「存檔」或 build.py --state 時寫入，請勿手動編輯 -->
+<script type="application/json" id="ocard-state">__STATE__</script>
+<script id="ocard-cap">
+/* Snapshot of the untouched document (used when 存檔 republishes the page), the saved photos for the
+   photo slots, and — inside Claude Design's preview — the host bridge the photo slots save through. */
+window.__ocardSrc=document.documentElement.outerHTML;
+try{var ph=(JSON.parse(document.getElementById('ocard-state').textContent||'{}')||{}).photos;if(ph&&typeof ph==='object'&&Object.keys(ph).length)window.__ocardSlotSeed=ph;}catch(e){}
+try{if(window.parent!==window&&window.parent.omelette&&window.parent.omelette.writeFile&&!window.omelette)window.omelette=window.parent.omelette;}catch(e){}
+</script>
+<script id="ocard-slot" data-ocard-after>
+__IMAGE_SLOT__
+</script>
+<script id="ocard-kit" data-ocard-after>
+__KIT__
+</script>
+<script id="ocard-engine" data-ocard-after>
+__ENGINE__
+</script>
+</body>
+</html>
