@@ -800,8 +800,9 @@ body.can-edit .okit-fix{right:136px}
   K.orderPanel=function(host,sec,items){
     var r0=sec.getBoundingClientRect(),k=r0.width/1280||1,G={},order=[];
     items.forEach(function(it){
-      var g=G[it.group];if(!g){g=G[it.group]={name:it.group,items:[],top:1e9,left:1e9};order.push(g);}g.items.push(it);
+      var g=G[it.group];if(!g){g=G[it.group]={name:it.group,items:[],top:1e9,left:1e9,ex:[]};order.push(g);}g.items.push(it);
       var els=it.sel?q(it.sel,sec):[],vis=els.filter(function(e){return e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden';});
+      if(it.quote!==false)(vis.length?vis:els).forEach(function(e){var tx=(e.textContent||'').replace(/\s+/g,' ').trim();tx=tx.length>14?tx.slice(0,13)+'…':tx;if(tx&&g.ex.indexOf(tx)<0&&g.ex.length<3)g.ex.push(tx);});
       (vis.length?vis:els).forEach(function(e){var r=e.getBoundingClientRect(),t=(r.top-r0.top)/k,l=(r.left-r0.left)/k;if(!r.width&&!r.height)return;
         t=Math.max(0,t);l=Math.max(0,l);
         /* a tall picture on the right (bleeding side photo) is read after the text column beside it */
@@ -810,7 +811,9 @@ body.can-edit .okit-fix{right:136px}
     });
     order.sort(function(a,b){return (Math.round(a.top/16)-Math.round(b.top/16))||(a.left-b.left);});
     host.innerHTML='';
-    order.forEach(function(g){var d=document.createElement('div');d.className='grp';d.innerHTML='<h3></h3>';d.firstChild.textContent=g.name;
+    /* each group names the part it changes and quotes the page's own text, so it's clear what is being adjusted */
+    order.forEach(function(g){var d=document.createElement('div');d.className='grp';d.innerHTML='<h3><span></span><small style="font-weight:400;letter-spacing:0;margin-left:8px;color:inherit;opacity:.8"></small></h3>';d.firstChild.firstChild.textContent=g.name;
+      if(g.ex.length)d.firstChild.lastChild.textContent='「'+g.ex.join('、')+'」';
       g.items.sort(function(a,b){return (a.rank||0)-(b.rank||0);}).forEach(function(it){d.appendChild(it.el);});host.appendChild(d);});
   };
 
@@ -1099,14 +1102,14 @@ body.can-edit .okit-fix{right:136px}
   var panel=document.getElementById('panel'),adj=document.getElementById('btn-adjust'),scopeEl=document.getElementById('p-scope'),list=document.getElementById('slides'),curPage=0,showAll=false;
   /* one page's settings in the order their parts sit on the slide (shared kit), related rows together */
   tinted.forEach(function(t){t.el.setAttribute('data-acc','');});
-  function clusterOf(r){
+  function clusterOf(r,sec){
     var k=r.k;
-    if(k==='acc')return ['輔助色','[data-acc]',1];
+    if(k==='acc')return sec&&sec.querySelector('h4[data-hid]')?['小標記號與輔助色','h4[data-hid]',2]:['輔助色','[data-acc]',1];
     if(k==='pn')return ['頁碼','.s-pn',1];
     if(/^nb_/.test(k))return ['編號','[data-nb]',1];
     if(k==='bn_pain')return ['徽章','.badge',1];
     if(/^ic_/.test(k))return ['徽章','.badge',2];
-    if(/^hm_/.test(k))return ['小標記號','h4[data-hid]',1];
+    if(/^hm_/.test(k))return ['小標記號與輔助色','h4[data-hid]',1];
     if(/^ph_/.test(k))return ['照片','.ph',1];
     return ['其他',null,1];
   }
@@ -1121,7 +1124,7 @@ body.can-edit .okit-fix{right:136px}
         var sc=r.el.querySelector('.scope');sc.hidden=!n;var multi=r.pages.length>1;sc.textContent=multi?'整份套用':'只改這頁';sc.classList.toggle('one',!multi);});
       g.el.hidden=!!n||!ga;});
     if(n){var it=items.filter(function(x){return x.dataset.id===n;})[0],its=[];
-      GROUPS.forEach(function(g){g.rows.forEach(function(r){if(!r.el.hidden){var c=clusterOf(r);its.push({el:r.el,group:c[0],sel:c[1],rank:c[2]});}});});
+      GROUPS.forEach(function(g){g.rows.forEach(function(r){if(!r.el.hidden){var c=clusterOf(r,it.querySelector('.slide'));its.push({el:r.el,group:c[0],sel:c[1],rank:c[2],quote:['照片','徽章','輔助色'].indexOf(c[0])<0});}});});
       if(!pageBox.parentNode)body.insertBefore(pageBox,GROUPS[0].el);pageBox.hidden=false;
       KIT.orderPanel(pageBox,it.querySelector('.slide'),its);}
     else pageBox.hidden=true;

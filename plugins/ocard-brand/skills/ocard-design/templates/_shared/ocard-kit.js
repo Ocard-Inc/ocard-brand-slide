@@ -292,8 +292,9 @@
   K.orderPanel=function(host,sec,items){
     var r0=sec.getBoundingClientRect(),k=r0.width/1280||1,G={},order=[];
     items.forEach(function(it){
-      var g=G[it.group];if(!g){g=G[it.group]={name:it.group,items:[],top:1e9,left:1e9};order.push(g);}g.items.push(it);
+      var g=G[it.group];if(!g){g=G[it.group]={name:it.group,items:[],top:1e9,left:1e9,ex:[]};order.push(g);}g.items.push(it);
       var els=it.sel?q(it.sel,sec):[],vis=els.filter(function(e){return e.getClientRects().length&&getComputedStyle(e).visibility!=='hidden';});
+      if(it.quote!==false)(vis.length?vis:els).forEach(function(e){var tx=(e.textContent||'').replace(/\s+/g,' ').trim();tx=tx.length>14?tx.slice(0,13)+'…':tx;if(tx&&g.ex.indexOf(tx)<0&&g.ex.length<3)g.ex.push(tx);});
       (vis.length?vis:els).forEach(function(e){var r=e.getBoundingClientRect(),t=(r.top-r0.top)/k,l=(r.left-r0.left)/k;if(!r.width&&!r.height)return;
         t=Math.max(0,t);l=Math.max(0,l);
         /* a tall picture on the right (bleeding side photo) is read after the text column beside it */
@@ -302,7 +303,9 @@
     });
     order.sort(function(a,b){return (Math.round(a.top/16)-Math.round(b.top/16))||(a.left-b.left);});
     host.innerHTML='';
-    order.forEach(function(g){var d=document.createElement('div');d.className='grp';d.innerHTML='<h3></h3>';d.firstChild.textContent=g.name;
+    /* each group names the part it changes and quotes the page's own text, so it's clear what is being adjusted */
+    order.forEach(function(g){var d=document.createElement('div');d.className='grp';d.innerHTML='<h3><span></span><small style="font-weight:400;letter-spacing:0;margin-left:8px;color:inherit;opacity:.8"></small></h3>';d.firstChild.firstChild.textContent=g.name;
+      if(g.ex.length)d.firstChild.lastChild.textContent='「'+g.ex.join('、')+'」';
       g.items.sort(function(a,b){return (a.rank||0)-(b.rank||0);}).forEach(function(it){d.appendChild(it.el);});host.appendChild(d);});
   };
 

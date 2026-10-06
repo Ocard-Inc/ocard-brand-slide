@@ -762,14 +762,14 @@ body.can-edit .okit-fix{right:136px}
   var panel=document.getElementById('panel'),adj=document.getElementById('btn-adjust'),scopeEl=document.getElementById('p-scope'),list=document.getElementById('slides'),curPage=0,showAll=false;
   /* one page's settings in the order their parts sit on the slide (shared kit), related rows together */
   tinted.forEach(function(t){t.el.setAttribute('data-acc','');});
-  function clusterOf(r){
+  function clusterOf(r,sec){
     var k=r.k;
-    if(k==='acc')return ['輔助色','[data-acc]',1];
+    if(k==='acc')return sec&&sec.querySelector('h4[data-hid]')?['小標記號與輔助色','h4[data-hid]',2]:['輔助色','[data-acc]',1];
     if(k==='pn')return ['頁碼','.s-pn',1];
     if(/^nb_/.test(k))return ['編號','[data-nb]',1];
     if(k==='bn_pain')return ['徽章','.badge',1];
     if(/^ic_/.test(k))return ['徽章','.badge',2];
-    if(/^hm_/.test(k))return ['小標記號','h4[data-hid]',1];
+    if(/^hm_/.test(k))return ['小標記號與輔助色','h4[data-hid]',1];
     if(/^ph_/.test(k))return ['照片','.ph',1];
     return ['其他',null,1];
   }
@@ -784,7 +784,7 @@ body.can-edit .okit-fix{right:136px}
         var sc=r.el.querySelector('.scope');sc.hidden=!n;var multi=r.pages.length>1;sc.textContent=multi?'整份套用':'只改這頁';sc.classList.toggle('one',!multi);});
       g.el.hidden=!!n||!ga;});
     if(n){var it=items.filter(function(x){return x.dataset.id===n;})[0],its=[];
-      GROUPS.forEach(function(g){g.rows.forEach(function(r){if(!r.el.hidden){var c=clusterOf(r);its.push({el:r.el,group:c[0],sel:c[1],rank:c[2]});}});});
+      GROUPS.forEach(function(g){g.rows.forEach(function(r){if(!r.el.hidden){var c=clusterOf(r,it.querySelector('.slide'));its.push({el:r.el,group:c[0],sel:c[1],rank:c[2],quote:['照片','徽章','輔助色'].indexOf(c[0])<0});}});});
       if(!pageBox.parentNode)body.insertBefore(pageBox,GROUPS[0].el);pageBox.hidden=false;
       KIT.orderPanel(pageBox,it.querySelector('.slide'),its);}
     else pageBox.hidden=true;
