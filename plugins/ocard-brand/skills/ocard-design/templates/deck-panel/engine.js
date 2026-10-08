@@ -202,22 +202,17 @@
     function OSH(r,c){var a=[];for(var i=0;i<16;i++){var t=i*Math.PI/8;a.push((Math.cos(t)*r).toFixed(2)+'px '+(Math.sin(t)*r).toFixed(2)+'px 0 '+c);}return a.join(',');}
     q('[data-metricno]',deck).forEach(function(el){
       snap(el);
-      if(el.getAttribute('data-metricno')==='past'){ /* 「過去」側的圖示：跟著這頁的樣式（圖磚／外框／無框），顏色固定淡灰 */
-        var ps0=String(Pg(SID(el),'ns','')),ns0=(ps0&&ps0.indexOf('跟隨')<0)?ps0:nsty,pi=el.querySelector('i');if(pi)snap(pi);
-        var mut=INK?'rgba(255,255,255,.38)':'#ADADAD';el.style.color=mut;
-        if(ns0.indexOf('外框')>=0){el.style.background='transparent';el.style.boxShadow='inset 0 0 0 1.33px '+(INK?'rgba(255,255,255,.22)':'#D6D6D6');}
-        else if(ns0.indexOf('無框')>=0){el.style.background='transparent';el.style.boxShadow='none';el.style.width='auto';el.style.height='auto';el.style.justifyContent='flex-start';el.style.borderRadius='0';if(pi)pi.style.fontSize='26px';}
-        else el.style.background=INK?'rgba(255,255,255,.08)':'#F2F2F2';
-        return;}
       var only=el.getAttribute('data-metricno')==='icon';
       var L=INK&&!!el.closest('[data-litecard]'),nl=L?LNW[nk]:NL0,nt=L?TXTW[nk]:NT0,tt=L?TILEW(nk):TL0;
+      var past=el.getAttribute('data-metricno')==='past'; /* 「過去」欄：形式、樣式都跟著這頁，顏色固定淡灰 */
+      if(past){nl=INK?'#5C5C5C':'#C9C9C9';nt=INK?'#8A8A8A':'#ADADAD';tt=INK?['#3D3D3D','#8A8A8A']:['#F2F2F2','#ADADAD'];}
       var id=SID(el),pf=String(Pg(id,'nf','')),fm=(pf&&pf.indexOf('跟隨')<0)?pf:form,ps=String(Pg(id,'ns','')),ns=(ps&&ps.indexOf('跟隨')<0)?ps:nsty;
-      var mn=el.querySelector('[data-mn]'),mi=el.querySelector('[data-mi]')||(only?el.querySelector('i'):null);
+      var mn=el.querySelector('[data-mn]'),mi=el.querySelector('[data-mi]')||el.querySelector('[data-pi]')||(only?el.querySelector('i'):null);
       if(mn)snap(mn);if(mi)snap(mi);
       el.removeAttribute('data-outline');
       var icon=only||(fm.indexOf('圖示')>=0&&!!mi);
       if(icon&&mi){if(mn)mn.style.display='none';mi.style.display='flex';mi.style.alignItems='center';mi.style.justifyContent='center';mi.style.lineHeight='1';mi.style.color='';}
-      var stroke=!icon&&fm.indexOf('描邊')>=0,sl=nk==='黃'&&(!INK||L)?'#333333':nl;
+      var stroke=!icon&&fm.indexOf('描邊')>=0,sl=!past&&nk==='黃'&&(!INK||L)?'#333333':nl;
       /* 描邊編號 reads larger than a solid figure (the outline adds weight), so it sets smaller */
       if(stroke){el.style.letterSpacing='0.08em';el.style.fontWeight='600';el.style.fontSize='15px';}
       if(ns.indexOf('外框')>=0){el.style.background='transparent';el.style.boxShadow='inset 0 0 0 1.33px '+nl;if(stroke){el.setAttribute('data-outline','');el.style.textShadow=OSH(1.4,sl);}else el.style.color=sl;}

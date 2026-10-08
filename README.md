@@ -25,4 +25,10 @@ Ocard-brand-Slide/
 
 ## 更新組織的外掛
 
-`.claude-plugin/marketplace.json` 讓這個 repo 可以當作外掛市集：外掛名稱 `ocard-slide-system-261008`（Ocard Slide System，名稱後面是更新日期，每次更新換新日期）。組織管理員把這個 repo 加成外掛來源後，在 Claude 裡安裝新的外掛；舊的外掛（`ocard-brand-261002`）建議移除，避免同時觸發兩個版本。
+這個 repo 本身就是外掛市集（`.claude-plugin/marketplace.json`）：市集名稱 `ocard`，外掛名稱固定為 **`ocard-slide-system`**（不帶日期），更新日期與版本寫在 `version` 和說明裡（目前 1.3.1，2026-10-08）。
+
+- **改了 skill 就要升版本號**（`plugin.json` 與 `marketplace.json` 的 `version` 一起改），Claude 才會把它當成新版。
+- **Claude Code 安裝**：`/plugin marketplace add Ocard-Inc/ocard-brand-slide` → `/plugin install ocard-slide-system@ocard`。repo 是私人的，電腦需先登入 GitHub（`gh auth login`、`gh auth setup-git`）。
+- **Claude Code 更新**：`/plugin marketplace update ocard`；或在 `/plugin` → Marketplaces 把這個市集的自動更新打開（預設關閉）。
+- **claude.ai 網頁版／桌面版**：不會自動從 GitHub 同步，由組織管理員在組織設定的外掛／技能頁面加入或更新。
+- 舊外掛 `ocard-brand-261002`（以及先前帶日期的名稱）請移除，避免兩個版本同時觸發。

@@ -1,7 +1,7 @@
 {
-  "name": "ocard-slide-system-261008",
-  "version": "1.3.0",
-  "description": "Ocard Slide System — Ocard 品牌設計系統與簡報製作（白底標準、墨底標準、六角幾何拼貼，內建調整面板）。更新日期 2026-10-06。",
+  "name": "ocard-slide-system",
+  "version": "1.3.1",
+  "description": "Ocard Slide System — Ocard 品牌設計系統與簡報製作（白底標準、墨底標準、六角幾何拼貼，內建調整面板）。版本 1.3.1，2026-10-08 更新。",
   "author": {
     "name": "Ocard Inc."
   }
