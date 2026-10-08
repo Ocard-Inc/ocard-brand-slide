@@ -3,6 +3,9 @@
   "owner": {
     "name": "Ocard Inc."
   },
+  "metadata": {
+    "description": "Ocard Inc. 的 Claude 外掛市集：Ocard 品牌簡報設計系統。"
+  },
   "plugins": [
     {
       "name": "ocard-slide-system",
