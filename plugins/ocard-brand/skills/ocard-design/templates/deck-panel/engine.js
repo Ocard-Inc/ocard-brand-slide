@@ -75,7 +75,7 @@
     if(x==='sub'||x==='tagall'||/^tag\d+$/.test(x))return ['[data-tag],[data-sublabel]','tag'];
     if(k==='g.ets'||k==='g.etc')return ['[data-tagable]','tag'];
     if(k==='g.bs'||k==='g.bc')return ['[data-bullet]','bul'];
-    if(x==='gender')return ['[data-icon="gf"],[data-icon="gm"]','etc'];if(x==='cta')return ['[data-ctaicon]','etc'];if(k==='g.pn')return ['[data-pagenum]','etc'];
+    if(/^logo(n|sz|c)$/.test(x))return ['[data-logobox]','lay'];if(x==='gender')return ['[data-icon="gf"],[data-icon="gm"]','etc'];if(x==='cta')return ['[data-ctaicon]','etc'];if(k==='g.pn')return ['[data-pagenum]','etc'];
     return null;}
 
   /* ---------- 4. apply every setting to the slides (brand logic from the Claude Design template) ---------- */
@@ -87,7 +87,7 @@
     /* 照片呈現: each photo page marks its own layout (data-photomode) and how its pieces move for the other modes (data-pm-*) */
     var PMK={'半版分欄':'half','六角遮罩':'hex','卡片內嵌':'card','不放照片':'none'},pmv=String(G('photo'));
     q('section[data-photomode]',deck).forEach(function(sc){
-      var m=PMK[pmv]||sc.getAttribute('data-photomode');
+      var m=PMK[pmv]||sc.getAttribute('data-photomode');if(m==='none'&&sc.hasAttribute('data-pm-nonone'))m=sc.getAttribute('data-photomode');
       q('[data-pm-half],[data-pm-hex],[data-pm-card],[data-pm-none]',sc).forEach(function(el){snap(el);var c=el.getAttribute('data-pm-'+m);if(c)el.style.cssText+=';'+c;});
       q('[data-photoframe] image-slot',sc).forEach(function(sl){
         function at(k,v){if(v==null){if(sl.hasAttribute(k))sl.removeAttribute(k);}else if(sl.getAttribute(k)!==v)sl.setAttribute(k,v);}
@@ -202,6 +202,13 @@
     function OSH(r,c){var a=[];for(var i=0;i<16;i++){var t=i*Math.PI/8;a.push((Math.cos(t)*r).toFixed(2)+'px '+(Math.sin(t)*r).toFixed(2)+'px 0 '+c);}return a.join(',');}
     q('[data-metricno]',deck).forEach(function(el){
       snap(el);
+      if(el.getAttribute('data-metricno')==='past'){ /* 「過去」側的圖示：跟著這頁的樣式（圖磚／外框／無框），顏色固定淡灰 */
+        var ps0=String(Pg(SID(el),'ns','')),ns0=(ps0&&ps0.indexOf('跟隨')<0)?ps0:nsty,pi=el.querySelector('i');if(pi)snap(pi);
+        var mut=INK?'rgba(255,255,255,.38)':'#ADADAD';el.style.color=mut;
+        if(ns0.indexOf('外框')>=0){el.style.background='transparent';el.style.boxShadow='inset 0 0 0 1.33px '+(INK?'rgba(255,255,255,.22)':'#D6D6D6');}
+        else if(ns0.indexOf('無框')>=0){el.style.background='transparent';el.style.boxShadow='none';el.style.width='auto';el.style.height='auto';el.style.justifyContent='flex-start';el.style.borderRadius='0';if(pi)pi.style.fontSize='26px';}
+        else el.style.background=INK?'rgba(255,255,255,.08)':'#F2F2F2';
+        return;}
       var only=el.getAttribute('data-metricno')==='icon';
       var L=INK&&!!el.closest('[data-litecard]'),nl=L?LNW[nk]:NL0,nt=L?TXTW[nk]:NT0,tt=L?TILEW(nk):TL0;
       var id=SID(el),pf=String(Pg(id,'nf','')),fm=(pf&&pf.indexOf('跟隨')<0)?pf:form,ps=String(Pg(id,'ns','')),ns=(ps&&ps.indexOf('跟隨')<0)?ps:nsty;
@@ -234,6 +241,9 @@
     /* 重點數字顏色: each big number can take an accent on its own */
     q('[data-num]',deck).forEach(function(el){snap(el);var sc=el.closest('section'),i=Array.prototype.indexOf.call(sc.querySelectorAll('[data-num]'),el),v=Pg(SID(el),'n'+(i+1),'');if(v&&NUMC[v])el.style.color=NUMC[v];});
     q('[data-pagenum]',deck).forEach(function(el){snap(el);var sc=el.closest('section'),p0=PN(sc),sp=el.querySelector('span'),tn=el.lastChild;if(p0&&sp)sp.textContent=p0;if(p0&&tn&&tn.nodeType===3)tn.nodeValue=' / '+pg(SECS.length);if(G('pn')===false)el.style.display='none';});
+    /* 信任牆 logo：數量、大小、灰階 */
+    q('[data-logos]',deck).forEach(function(g){var id=SID(g),bx=q('[data-logobox]',g),n=+Pg(id,'logon',String(bx.length))||bx.length,pad={'小':22,'中':12,'大':4}[Pg(id,'logosz','中')]||12,gray=Pg(id,'logoc','原色')==='灰階';
+      bx.forEach(function(b,i){snap(b);if(i>=n)b.style.display='none';b.style.padding=pad+'px';var sl=b.querySelector('image-slot');if(sl)sl.style.filter=gray?'grayscale(1)':'';});});
     /* 顯示可調整區塊: every panel row of a page boxes the things it changes (MKT), so the boxes always match the panel */
     q('[data-mk]',deck).forEach(function(el){el.removeAttribute('data-mk');});
     if(G('marks'))SECS.forEach(function(sc){var id=sc.getAttribute('data-id');
@@ -329,6 +339,10 @@
       else if(hasSub(sc))per.push({k:id+'.sub',t:'內文標籤',pages:[id],def:sc.getAttribute('data-tagdef')||'淺灰底',opts:TAGOPTS(ind),pills:true});
       if(sc.querySelector('[data-icon="gf"],[data-icon="gm"]'))per.push({k:id+'.gender',t:'性別圖示顏色',pages:[id],def:'預設 中灰',opts:['預設 中灰','女紫・男青','女橘・男青','墨色'].map(function(v){return O(v);}),cols:2});
       if(sc.querySelector('[data-ctaicon]'))per.push({k:id+'.cta',t:'聯絡按鈕圖示',pages:[id],def:'顯示',opts:[O('顯示'),O('隱藏')],cols:2});
+      if(sc.querySelector('[data-logos]')){var nb=sc.querySelectorAll('[data-logobox]').length,cn=[];for(var j=1;j<=nb;j++)cn.push(O(String(j)));
+        per.push({k:id+'.logon',t:'Logo 數量',pages:[id],def:String(nb),opts:cn,cols:4,hint:'沒用到的位置會收起來，剩下的置中排列。'});
+        per.push({k:id+'.logosz',t:'Logo 大小',pages:[id],def:'中',opts:['小','中','大'].map(function(v){return O(v);})});
+        per.push({k:id+'.logoc',t:'Logo 顏色',pages:[id],def:'原色',opts:['原色','灰階'].map(function(v){return O(v);}),cols:2,hint:'灰階：多家品牌並列時顏色不會搶。個別 logo 的大小與位置，放好後按「照片」的「調整範圍」微調。'});}
       var slots=sc.querySelectorAll('image-slot');
       if(slots.length)per.push({k:id+'.photos',type:'photos',t:'照片',pages:[id],slots:Array.prototype.slice.call(slots)});
     });
@@ -346,7 +360,7 @@
             R('bc','列點 · 顏色','[data-bullet]',SW(['#FC6815','#B287FD','#24C6B7',NEUHEX,'#ADADAD']),{sw:true,hint:'黃色列點是品牌規範禁止的用法，所以不提供。'})];
     var g5=[R('ets','頁面標籤 · 樣式','[data-tagable]',['純文字','外框','底色'].map(function(v){return O(v,labelPic(v));}),{d:'每頁左上角的小標'}),
             R('etc','頁面標籤 · 顏色','[data-tagable]',SW(['#ADADAD','#FC6815','#B287FD','#24C6B7'].concat(INK?['#FFEA00']:[]).concat([NEUHEX])),{sw:true,hint:INK?'':'白底不提供黃色：黃字在白底上看不清楚。'})];
-    var gP=[R('photo','照片呈現','section[data-photomode]',['各頁原本的樣式','半版分欄','六角遮罩','卡片內嵌','不放照片'].map(function(v){return O(v,PHOTO_PIC[v]);}),{hint:'整份一致。「各頁原本的樣式」＝每頁維持版型設計時的照片樣式（例：02 宣言是六角遮罩、20 圖文列表是半版分欄）；選其他四種會把這些頁統一成同一種。'})];
+    var gP=[R('photo','照片呈現','section[data-photomode]',['各頁原本的樣式','半版分欄','六角遮罩','卡片內嵌','不放照片'].map(function(v){return O(v,PHOTO_PIC[v]);}),{hint:'整份一致。「各頁原本的樣式」＝每頁維持版型設計時的照片樣式（例：02 宣言是六角遮罩、20 圖文列表是半版分欄）；選其他四種會把這些頁統一成同一種。21 深度個案一定放照片，沒有「不放照片」。'})];
     var g6=[(function(){var p=pages('[data-pagenum]');return p.length?{k:'g.pn',type:'switch',t:'顯示頁碼',d:'每頁右下角的頁碼',pages:p}:null;})()];
     /* 重點卡 and 解讀卡側條 sit with the card settings: 卡片外觀 → 重點強調方式 → 重點卡 → 重點側條顏色 → 解讀卡側條 */
     var EM=per.filter(function(r){return /\.emph$/.test(r.k);}),NO=per.filter(function(r){return /\.note$/.test(r.k);});
@@ -430,6 +444,7 @@
     body.appendChild(gd);
   });
   function syncPanel(){
+    var pr_=ROWS['g.photo'];if(pr_&&pr_.el){var nn_=!!(curPage&&document.querySelector('section[data-id="'+curPage+'"][data-pm-nonone]')),b_=pr_.el.querySelector('.opt[data-v="不放照片"]');if(b_)b_.hidden=nn_;} /* 21 深度個案 always keeps its photos */
     Object.keys(ROWS).forEach(function(k){var r=ROWS[k];if(!r.el)return;
       if(r.type==='switch')r.el.querySelector('.sw').setAttribute('aria-checked',G(k.slice(2))?'true':'false');
       else if(r.type==='icons')r.el.querySelectorAll('.icl-o').forEach(function(box){var cur=Pg(r.pages[0],box.getAttribute('data-ick'),'');var el=null;
@@ -460,11 +475,12 @@
     if(/\.emph$/.test(k))return em==='無';
     if(r.type==='icons'&&!r.bullet){var f=Pg(id,'nf','');f=f&&String(f).indexOf('跟隨')<0?f:G('nf');return String(f).indexOf('圖示')<0;}
     if(r.type==='icons'&&r.bullet)return String(G('bs')).indexOf('圖示')<0;
-    if(r.type==='photos'){var sc=document.querySelector('section[data-id="'+id+'"]');return !!(sc&&sc.hasAttribute('data-photomode')&&String(G('photo'))==='不放照片');}
+    if(r.type==='photos'){var sc=document.querySelector('section[data-id="'+id+'"]');return !!(sc&&sc.hasAttribute('data-photomode')&&!sc.hasAttribute('data-pm-nonone')&&String(G('photo'))==='不放照片');}
     return false;
   }
   function paintPhotos(r){
     r.el.querySelectorAll('.pp-r').forEach(function(pr){var sl=r.slots[+pr.getAttribute('data-i')],has=sl.hasAttribute('data-filled'),shown=!!(sl.offsetWidth||sl.getClientRects().length);
+      var lb=sl.closest('[data-logobox]');pr.hidden=!!(lb&&lb.style.display==='none');
       pr.querySelector('em').textContent=shown?(has?'已放照片':'尚未放照片'):'這個樣式目前沒有顯示';
       pr.querySelector('[data-pa="add"]').textContent=has?'更換照片':'選擇照片';pr.querySelector('[data-pa="add"]').hidden=!shown;
       pr.querySelector('[data-pa="edit"]').hidden=!has||!shown;pr.querySelector('[data-pa="remove"]').hidden=!has;});
@@ -497,7 +513,7 @@
       'nf':['編號與圖示',NUM,1],'ns':['編號與圖示',NUM,3],
       'icons':r.bullet?['列點','[data-bullet]',2]:['編號與圖示',NUM,2],
       'nums':['重點數字','[data-num]',1],'sub':['內文標籤','[data-sublabel],[data-tag]',1],'tagall':['內文標籤','[data-tag]',1],
-      'gender':['性別圖示','[data-icon="gf"],[data-icon="gm"]',1],'cta':['聯絡按鈕','[data-ctaicon]',1],'photos':sec.querySelector('[data-coverstyle]')?['封面','[data-coverstyle]',2]:sec.querySelector('[data-secstyle]')?['章節頁','[data-secstyle]',2]:['照片','image-slot',2]};
+      'logon':['Logo','[data-logos]',1],'logosz':['Logo','[data-logos]',2],'logoc':['Logo','[data-logos]',3],'gender':['性別圖示','[data-icon="gf"],[data-icon="gm"]',1],'cta':['聯絡按鈕','[data-ctaicon]',1],'photos':sec.querySelector('[data-logos]')?['Logo','[data-logos]',4]:sec.querySelector('[data-coverstyle]')?['封面','[data-coverstyle]',2]:sec.querySelector('[data-secstyle]')?['章節頁','[data-secstyle]',2]:['照片','image-slot',2]};
     if(loc&&L[loc])return L[loc];
     if(loc&&/^tag\d+$/.test(loc))return ['內文標籤','[data-tag]',1+ +loc.slice(3)];
     return ['其他',null,1];
