@@ -63,6 +63,21 @@
   function hasSub(sc){return !!sc.querySelector('[data-sublabel]')||sc.querySelectorAll('[data-tag]').length>0;}
   function emphKids(g){return Array.prototype.filter.call(g.children,function(c){return c.getAttribute('data-card')==='plain';});}
 
+  /* which elements each panel row changes, and the box colour: lay(out) · card · num(bers & icons) · tag · bul(lets) · etc */
+  function MKT(r){var k=r.gk||r.k,x=k.slice(k.indexOf('.')+1);
+    if(k==='g.cover')return ['[data-coverstyle]','lay'];if(k==='g.sec')return ['[data-secstyle]','lay'];
+    if(k==='g.photo')return ['[data-photoframe]','lay'];if(x==='photos')return ['image-slot','lay'];
+    if(k==='g.card')return ['[data-card="plain"]','card'];
+    if(k==='g.emode'||x==='emph')return ['[data-emphgroup]>[data-card="plain"]','card'];
+    if(k==='g.acc')return ['[data-emphgroup]>[data-card="plain"],[data-emph="note"]','card'];if(x==='note')return ['[data-emph="note"]','card'];
+    if(/^(nf|ns|nc)$/.test(x))return ['[data-metricno],[data-icon="on"]','num'];if(x==='icons')return r.bullet?['[data-bullet]','bul']:['[data-metricno]','num'];
+    if(x==='nums')return ['[data-num]','num'];
+    if(x==='sub'||x==='tagall'||/^tag\d+$/.test(x))return ['[data-tag],[data-sublabel]','tag'];
+    if(k==='g.ets'||k==='g.etc')return ['[data-tagable]','tag'];
+    if(k==='g.bs'||k==='g.bc')return ['[data-bullet]','bul'];
+    if(x==='gender')return ['[data-icon="gf"],[data-icon="gm"]','etc'];if(x==='cta')return ['[data-ctaicon]','etc'];if(k==='g.pn')return ['[data-pagenum]','etc'];
+    return null;}
+
   /* ---------- 4. apply every setting to the slides (brand logic from the Claude Design template) ---------- */
   function apply(){
     var cvs=String(G('cover')),cvk=cvs.indexOf('長方')>=0?'rect':cvs.indexOf('六角')>=0?'photo':'mark';
@@ -219,10 +234,14 @@
     /* 重點數字顏色: each big number can take an accent on its own */
     q('[data-num]',deck).forEach(function(el){snap(el);var sc=el.closest('section'),i=Array.prototype.indexOf.call(sc.querySelectorAll('[data-num]'),el),v=Pg(SID(el),'n'+(i+1),'');if(v&&NUMC[v])el.style.color=NUMC[v];});
     q('[data-pagenum]',deck).forEach(function(el){snap(el);var sc=el.closest('section'),p0=PN(sc),sp=el.querySelector('span'),tn=el.lastChild;if(p0&&sp)sp.textContent=p0;if(p0&&tn&&tn.nodeType===3)tn.nodeValue=' / '+pg(SECS.length);if(G('pn')===false)el.style.display='none';});
-    if(G('marks')){
-      var mk=function(s,c){q(s,deck).forEach(function(el){el.style.outline=c;el.style.outlineOffset='3px';});};
-      mk('[data-tagable]','2px dashed #FC6815');mk('[data-sublabel],[data-tag]','2px dashed #1AA89B');mk('[data-icon="on"],[data-metricno]','2px dotted #8B5CF6');mk('[data-bullet]','2px dotted '+NEU);mk('[data-ctaicon]','2px dotted #FFB800');mk('[data-emphgroup]>[data-card="plain"],[data-emph]','2px dashed #ADADAD');
-    }
+    /* 顯示可調整區塊: every panel row of a page boxes the things it changes (MKT), so the boxes always match the panel */
+    q('[data-mk]',deck).forEach(function(el){el.removeAttribute('data-mk');});
+    if(G('marks'))SECS.forEach(function(sc){var id=sc.getAttribute('data-id');
+      Object.keys(ROWS).forEach(function(k){var r=ROWS[k];if(r.pages==='all'||r.pages.indexOf(id)<0)return;var t=MKT(r);if(!t)return;
+        q(t[0],sc).concat(sc.matches(t[0])?[sc]:[]).forEach(function(el){
+          if(el.tagName==='SECTION')return;if(el.tagName==='IMAGE-SLOT'&&el.parentElement)el=el.parentElement;
+          var pa=el.parentElement;if(t[1]==='lay'&&pa&&pa.tagName!=='SECTION'&&getComputedStyle(pa).overflow==='hidden')el=pa; /* a cropped photo: box what shows */
+          if(el.style.display==='none'||el.getAttribute('data-mk'))return;el.setAttribute('data-mk',t[1]);});});});
     syncPanel();
   }
   function icKey(el){var sc=el.closest('section');if(el.getAttribute('data-b')==='icon')return 'bi'+(Array.prototype.indexOf.call(sc.querySelectorAll('i[data-b="icon"]'),el)+1);return 'ic'+(Array.prototype.indexOf.call(sc.querySelectorAll('i[data-mi]'),el)+1);}
@@ -276,7 +295,7 @@
 
   function schema(){
     var GROUPS=[];
-    GROUPS.push({t:'說明',rows:[{k:'g.marks',type:'switch',t:'顯示可調整區塊',d:'在簡報上用虛線框出可以調整的地方',pages:'all'}]});
+    GROUPS.push({t:'說明',rows:[{k:'g.marks',type:'switch',t:'顯示可調整區塊',d:'用虛線框出這頁面板裡每一項會改到的地方（顏色對應：青＝版面與照片、灰＝卡片、紫＝編號與數字、橘＝標籤、深色＝列點、金＝其他）',pages:'all'}]});
     var per=[];
     SECS.forEach(function(sc){
       var id=sc.getAttribute('data-id'),eg=sc.querySelector('[data-emphgroup]');

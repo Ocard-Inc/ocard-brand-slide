@@ -75,6 +75,15 @@ body{background:var(--chrome-bg);color:var(--chrome-text);font-family:var(--font
 .slide i[class*="icon-"]{display:inline-flex;align-items:center;justify-content:center;font-style:normal;line-height:1}
 .slide i[class*="icon-"]>svg{width:1em;height:1em;display:block}
 .slide image-slot{cursor:pointer}
+/* 顯示可調整區塊 (colour = panel group): 版面與照片 青 · 卡片 灰 · 編號與數字 紫 · 標籤 橘 · 列點 墨 · 其他 金 */
+.slide [data-mk]{outline:2px dashed #1AA89B;outline-offset:3px}
+.slide [data-mk="card"]{outline-color:#8A8A8A}
+.slide [data-mk="num"]{outline:2px dotted #8B5CF6}
+.slide [data-mk="tag"]{outline-color:#FC6815}
+.slide [data-mk="bul"]{outline:2px dotted #333333}
+[data-ground="ink"] .slide [data-mk="bul"]{outline-color:#FFFFFF}
+.slide [data-mk="etc"]{outline:2px dotted #FFB800}
+body:not(.can-edit) .slide [data-mk],.okit-capturing .slide [data-mk]{outline:none!important}
 
 /* ---------- adjust panel ---------- */
 .scrim{position:fixed;inset:0;background:rgba(26,26,26,.35);z-index:30;opacity:0;pointer-events:none;transition:opacity 180ms cubic-bezier(.2,0,0,1)}
